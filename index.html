@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#059669">
+<title>بازارا — هر کسب‌وکار، یک جستجو دورتر</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{font-family:Vazirmatn,sans-serif}
+  .no-scroll::-webkit-scrollbar{display:none}
+  .line2{-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</head>
+<body class="bg-neutral-50 text-neutral-800">
+
+<!-- هدر -->
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral-200">
+  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white grid place-items-center font-bold">ب</div>
+      <span class="font-bold text-lg">بازارا</span>
+    </div>
+    <button onclick="openLogin()" class="text-sm bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-semibold">ورود</button>
+  </div>
+</header>
+
+<!-- هیرو -->
+<section class="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white px-4 pt-8 pb-10">
+  <div class="max-w-5xl mx-auto text-center">
+    <h1 class="text-2xl md:text-4xl font-bold leading-tight">هر کسب‌وکار، یک جستجو دورتر</h1>
+    <p class="text-emerald-50 text-sm mt-2">کافه، رستوران، آرایشگاه، مارکت و هر چه لازم داری — در شیراز و به‌زودی همه‌جا</p>
+    <div class="mt-5 flex gap-2 bg-white rounded-2xl shadow-lg p-1.5">
+      <input id="q" oninput="render()" placeholder="دنبال چی می‌گردی؟" 
+        class="flex-1 px-3 py-2.5 text-neutral-900 outline-none rounded-xl text-sm">
+      <select id="city" onchange="render()" class="border-r px-2 text-sm text-neutral-600 bg-white rounded-xl outline-none">
+        <option>شیراز</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- دسته‌بندی‌ها -->
+<section class="max-w-5xl mx-auto px-4 pt-6">
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="font-bold text-base">دسته‌بندی‌ها</h2>
+    <button onclick="resetCat()" class="text-xs text-emerald-700">همه</button>
+  </div>
+  <div id="cats" class="grid grid-cols-4 md:grid-cols-6 gap-2"></div>
+</section>
+
+<!-- لیست کسب‌وکارها -->
+<section class="max-w-5xl mx-auto px-4 pt-8 pb-24">
+  <div class="flex items-center justify-between mb-3">
+    <h2 id="title" class="font-bold text-base">همه کسب‌وکارها</h2>
+    <span id="count" class="text-xs text-neutral-500"></span>
+  </div>
+  <div id="list" class="grid gap-3 md:grid-cols-3"></div>
+</section>
+
+<!-- نوار پایین -->
+<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40">
+  <div class="max-w-5xl mx-auto grid grid-cols-4 text-xs text-neutral-500">
+    <button class="py-2 flex flex-col items-center gap-1 text-emerald-600"><span class="text-lg">🏠</span>خانه</button>
+    <button onclick="document.getElementById('q').focus()" class="py-2 flex flex-col items-center gap-1"><span class="text-lg">🔍</span>جستجو</button>
+    <button onclick="openClaim()" class="py-2 flex flex-col items-center gap-1"><span class="text-lg">🏪</span>کسب‌وکار من</button>
+    <button onclick="openLogin()" class="py-2 flex flex-col items-center gap-1"><span class="text-lg">👤</span>حساب</button>
+  </div>
+</nav>
+
+<!-- مودال جزئیات -->
+<div id="modal" class="fixed inset-0 bg-black/50 z-50 hidden items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this)closeModal()">
+  <div class="bg-white w-full max-w-lg rounded-t-3xl md:rounded-3xl max-h-[90vh] overflow-y-auto" id="modalBody"></div>
+</div>
+
+<!-- مودال ورود -->
+<div id="login" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-6">
+    <h3 class="font-bold text-lg mb-1">ورود / ثبت‌نام</h3>
+    <p class="text-xs text-neutral-500 mb-4">شماره موبایلت را وارد کن</p>
+    <input id="phone" type="tel" placeholder="09xxxxxxxxx" class="w-full border rounded-xl px-3 py-3 text-center tracking-widest">
+    <button onclick="sendOtp()" class="mt-3 w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">دریافت کد</button>
+    <p class="text-[11px] text-neutral-400 mt-3 text-center">در نسخه آزمایشی، کد پیامک نمی‌شود</p>
+  </div>
+</div>
+
+<!-- مودال Claim -->
+<div id="claim" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-6">
+    <h3 class="font-bold text-lg mb-1">این کسب‌وکار من است</h3>
+    <p class="text-xs text-neutral-500 mb-4">نام کسب‌وکار و شماره‌ات را وارد کن تا پروفایل را Claim کنیم</p>
+    <input id="bizName" placeholder="نام کسب‌وکار" class="w-full border rounded-xl px-3 py-3 mb-2 text-sm">
+    <input id="bizPhone" placeholder="شماره تماس" class="w-full border rounded-xl px-3 py-3 mb-3 text-sm">
+    <button onclick="submitClaim()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">ثبت درخواست</button>
+  </div>
+</div>
+
+<script>
+const CATS = [
+  {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'},
+  {id:'beauty', name:'زیبایی و آرایش', icon:'💇'},
+  {id:'shopping', name:'خرید و مارکت', icon:'🛒'},
+  {id:'health', name:'سلامت و درمان', icon:'💊'},
+  {id:'repair', name:'تعمیرات خانه', icon:'🔧'},
+  {id:'auto', name:'خودرو', icon:'🚗'},
+  {id:'fitness', name:'ورزش', icon:'💪'},
+  {id:'education', name:'آموزش', icon:'📚'},
+  {id:'fashion', name:'پوشاک و مد', icon:'👕'},
+  {id:'pets', name:'حیوانات خانگی', icon:'🐾'},
+  {id:'travel', name:'سفر و اقامت', icon:'✈️'},
+  {id:'agri', name:'کشاورزی و عمده', icon:'🌾'},
+];
+
+const BIZ = [
+  {id:1, name:'کافه ونیز', cat:'food', sub:'کافه', area:'معالی‌آباد', rating:4.7, reviews:82, phone:'09170000001', desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=250&fit=crop', plan:'premium'},
+  {id:2, name:'رستوران هفت‌خوان', cat:'food', sub:'رستوران', area:'قصردشت', rating:4.5, reviews:210, phone:'09170000002', desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop', plan:'pro'},
+  {id:3, name:'فست‌فود برگرلند', cat:'food', sub:'فست‌فود', area:'زندیه', rating:4.3, reviews:156, phone:'09170000003', desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop', plan:'free'},
+  {id:4, name:'قنادی گلستان', cat:'food', sub:'قنادی', area:'حافظیه', rating:4.8, reviews:340, phone:'09170000004', desc:'شیرینی سنتی شیرازی', img:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&h=250&fit=crop', plan:'pro'},
+  {id:5, name:'آرایشگاه رویال', cat:'beauty', sub:'آرایشگاه مردانه', area:'بلوار رحمت', rating:4.6, reviews:95, phone:'09170000005', desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=250&fit=crop', plan:'free'},
+  {id:6, name:'سالن زیبایی نیلا', cat:'beauty', sub:'سالن زیبایی', area:'ستارخان', rating:4.9, reviews:178, phone:'09170000006', desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop', plan:'premium'},
+  {id:7, name:'سوپرمارکت رفاه', cat:'shopping', sub:'مارکت', area:'فرهنگ‌شهر', rating:4.2, reviews:64, phone:'09170000007', desc:'خرید روزانه با قیمت مناسب', img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=250&fit=crop', plan:'free'},
+  {id:8, name:'میوه‌فروشی باغ', cat:'shopping', sub:'میوه تازه', area:'قدوسی', rating:4.4, reviews:41, phone:'09170000008', desc:'میوه تازه و ارسال رایگان', img:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=250&fit=crop', plan:'free'},
+  {id:9, name:'کافه کتاب', cat:'food', sub:'کافه', area:'ارم', rating:4.6, reviews:120, phone:'09170000009', desc:'کافه و کتاب‌فروشی', img:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&h=250&fit=crop', plan:'pro'},
+  {id:10, name:'کبابی شاطرعباس', cat:'food', sub:'کباب', area:'چهارراه مشیر', rating:4.7, reviews:290, phone:'09170000010', desc:'کباب کوبیده اصل', img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=250&fit=crop', plan:'free'},
+];
+
+let selectedCat = 'all';
+
+function renderCats(){
+  document.getElementById('cats').innerHTML = CATS.map(c => `
+    <button onclick="pickCat('${c.id}')" class="flex flex-col items-center gap-1 bg-white rounded-2xl p-2 shadow-sm ${selectedCat===c.id?'ring-2 ring-emerald-500':''}">
+      <span class="text-xl">${c.icon}</span>
+      <span class="text-[10px] text-center leading-tight">${c.name}</span>
+    </button>
+  `).join('');
+}
+
+function pickCat(id){ selectedCat = id; renderCats(); render(); }
+function resetCat(){ selectedCat = 'all'; renderCats(); render(); }
+
+function render(){
+  const q = document.getElementById('q').value.trim();
+  let items = BIZ.slice();
+  if(selectedCat !== 'all') items = items.filter(b => b.cat === selectedCat);
+  if(q) items = items.filter(b => (b.name+b.desc+b.sub+b.area).includes(q));
+  items.sort((a,b)=> (b.plan==='premium'?1:0)-(a.plan==='premium'?1:0) || b.rating-a.rating);
+
+  const cat = CATS.find(c=>c.id===selectedCat);
+  document.getElementById('title').textContent = cat ? cat.name : 'همه کسب‌وکارها';
+  document.getElementById('count').textContent = items.length + ' نتیجه';
+
+  if(!items.length){
+    document.getElementById('list').innerHTML = `<div class="col-span-3 text-center py-12 text-neutral-400 text-sm">چیزی پیدا نشد</div>`;
+    return;
+  }
+
+  document.getElementById('list').innerHTML = items.map(b => `
+    <div onclick="openBiz(${b.id})" class="bg-white rounded-2xl overflow-hidden shadow-sm active:scale-[0.98] transition cursor-pointer ${b.plan==='premium'?'ring-1 ring-amber-300':''}">
+      <div class="h-36 bg-neutral-100 relative">
+        <img src="${b.img}" alt="${b.name}" class="w-full h-full object-cover" loading="lazy">
+        ${b.plan==='premium'?'<span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full">ویژه</span>':''}
+        ${b.plan==='pro'?'<span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full">حرفه‌ای</span>':''}
+      </div>
+      <div class="p-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-sm">${b.name}</h3>
+          <span class="text-amber-600 text-xs">⭐ ${b.rating}</span>
+        </div>
+        <p class="text-[11px] text-neutral-500 mt-1 line2">${b.desc}</p>
+        <div class="flex items-center gap-1 text-[11px] text-neutral-400 mt-2">
+          <span>📍 ${b.area}</span><span>·</span><span>${b.sub}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openBiz(id){
+  const b = BIZ.find(x=>x.id===id);
+  const cat = CATS.find(c=>c.id===b.cat);
+  document.getElementById('modalBody').innerHTML = `
+    <div class="relative h-56">
+      <img src="${b.img}" class="w-full h-full object-cover">
+      <button onclick="closeModal()" class="absolute top-3 left-3 w-9 h-9 bg-white/90 rounded-full grid place-items-center text-lg">✕</button>
+    </div>
+    <div class="p-5">
+      <div class="flex items-center justify-between">
+        <h2 class="font-bold text-xl">${b.name}</h2>
+        <span class="text-amber-600 text-sm">⭐ ${b.rating} (${b.reviews})</span>
+      </div>
+      <p class="text-xs text-neutral-500 mt-1">${cat.icon} ${cat.name} · ${b.sub}</p>
+      <p class="mt-3 text-sm text-neutral-700 leading-relaxed">${b.desc}</p>
+      <div class="mt-4 space-y-2 text-sm">
+        <div class="flex items-center gap-2 text-neutral-600">📍 ${b.area}، شیراز</div>
+        <div class="flex items-center gap-2 text-neutral-600">🕐 هر روز ۹ تا ۲۳</div>
+      </div>
+      <div class="mt-5 grid grid-cols-2 gap-2">
+        <a href="tel:${b.phone}" class="bg-emerald-600 text-white text-center py-3 rounded-xl font-semibold text-sm">📞 تماس</a>
+        <button onclick="alert('به‌زودی: رزرو آنلاین')" class="bg-neutral-100 text-neutral-800 py-3 rounded-xl font-semibold text-sm">رزرو</button>
+      </div>
+      <button onclick="alert('به‌زودی: ثبت نظر')" class="mt-2 w-full text-sm text-emerald-700 py-2">✍️ ثبت نظر</button>
+    </div>
+  `;
+  const m = document.getElementById('modal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+}
+
+function closeModal(){ const m = document.getElementById('modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
+
+function openLogin(){ const l = document.getElementById('login'); l.classList.remove('hidden'); l.classList.add('flex'); }
+function sendOtp(){ 
+  const p = document.getElementById('phone').value.trim();
+  if(p.length < 10) return alert('شماره معتبر وارد کن');
+  alert('نسخه آزمایشی: ثبت‌نام شبیه‌سازی شد ✅\nدر نسخه بعدی با Supabase OTP واقعی می‌شود.');
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('login').classList.remove('flex');
+}
+
+function openClaim(){ const c = document.getElementById('claim'); c.classList.remove('hidden'); c.classList.add('flex'); }
+function submitClaim(){
+  const n = document.getElementById('bizName').value.trim();
+  if(!n) return alert('نام کسب‌وکار را وارد کن');
+  alert('درخواست ثبت شد ✅\nبعد از تأیید، پنل شما فعال می‌شود.');
+  document.getElementById('claim').classList.add('hidden');
+  document.getElementById('claim').classList.remove('flex');
+  document.getElementById('bizName').value = '';
+  document.getElementById('bizPhone').value = '';
+}
+
+renderCats();
+render();
+</script>
+</body>
+</html>
