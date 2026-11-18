@@ -99,7 +99,10 @@
 </div>
 
 <script>
-const CATS = [
+const SUPABASE_URL = 'https://lzfxzeumhrvdrinorcxz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Q5ZMjJOakgENZrTgmHPOYg_IAO2Pa0s';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const CATS = [
   {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'},
   {id:'beauty', name:'زیبایی و آرایش', icon:'💇'},
   {id:'shopping', name:'خرید و مارکت', icon:'🛒'},
