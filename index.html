@@ -7,8 +7,6 @@
 <title>بازارا — هر کسب‌وکار، یک جستجو دورتر</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   body{font-family:Vazirmatn,sans-serif}
   .no-scroll::-webkit-scrollbar{display:none}
@@ -99,8 +97,7 @@
 </div>
 
 <script>
-
-  const CATS = [
+const CATS = [
   {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'},
   {id:'beauty', name:'زیبایی و آرایش', icon:'💇'},
   {id:'shopping', name:'خرید و مارکت', icon:'🛒'},
@@ -125,28 +122,8 @@ const BIZ = [
   {id:7, name:'سوپرمارکت رفاه', cat:'shopping', sub:'مارکت', area:'فرهنگ‌شهر', rating:4.2, reviews:64, phone:'09170000007', desc:'خرید روزانه با قیمت مناسب', img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=250&fit=crop', plan:'free'},
   {id:8, name:'میوه‌فروشی باغ', cat:'shopping', sub:'میوه تازه', area:'قدوسی', rating:4.4, reviews:41, phone:'09170000008', desc:'میوه تازه و ارسال رایگان', img:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=250&fit=crop', plan:'free'},
   {id:9, name:'کافه کتاب', cat:'food', sub:'کافه', area:'ارم', rating:4.6, reviews:120, phone:'09170000009', desc:'کافه و کتاب‌فروشی', img:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&h=250&fit=crop', plan:'pro'},
-  {id:10, name:'کبابی شاطرعباس', cat:'food', sub:'کباب', area:'چهارراه مشیر', rating:4.7, reviews:290, phone:'09170000010', desc:'کباب کوبیده اصل', img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=250&fit=crop', plan:'free'}
+  {id:10, name:'کبابی شاطرعباس', cat:'food', sub:'کباب', area:'چهارراه مشیر', rating:4.7, reviews:290, phone:'09170000010', desc:'کباب کوبیده اصل', img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=250&fit=crop', plan:'free'},
 ];
-  const { data, error } = await sb.from('businesses').select('*');
-  if (error) { 
-    console.error(error); 
-    return; 
-  }
-  BIZ = data.map(b => ({
-    id: b.id,
-    name: b.name,
-    cat: b.category,
-    sub: b.subcategory,
-    area: b.area,
-    rating: b.rating,
-    reviews: b.reviews_count,
-    phone: b.phone,
-    desc: b.description,
-    img: b.image_url,
-    plan: b.plan
-  }));
-  render();
-}
 
 let selectedCat = 'all';
 
@@ -230,26 +207,10 @@ function openBiz(id){
 }
 
 function closeModal(){ const m = document.getElementById('modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-
 function openLogin(){ const l = document.getElementById('login'); l.classList.remove('hidden'); l.classList.add('flex'); }
-function sendOtp(){ 
-  const p = document.getElementById('phone').value.trim();
-  if(p.length < 10) return alert('شماره معتبر وارد کن');
-  alert('نسخه آزمایشی: ثبت‌نام شبیه‌سازی شد ✅\nدر نسخه بعدی با Supabase OTP واقعی می‌شود.');
-  document.getElementById('login').classList.add('hidden');
-  document.getElementById('login').classList.remove('flex');
-}
-
+function sendOtp(){ alert('نسخه آزمایشی: ثبت‌نام شبیه‌سازی شد ✅'); document.getElementById('login').classList.add('hidden'); document.getElementById('login').classList.remove('flex'); }
 function openClaim(){ const c = document.getElementById('claim'); c.classList.remove('hidden'); c.classList.add('flex'); }
-function submitClaim(){
-  const n = document.getElementById('bizName').value.trim();
-  if(!n) return alert('نام کسب‌وکار را وارد کن');
-  alert('درخواست ثبت شد ✅\nبعد از تأیید، پنل شما فعال می‌شود.');
-  document.getElementById('claim').classList.add('hidden');
-  document.getElementById('claim').classList.remove('flex');
-  document.getElementById('bizName').value = '';
-  document.getElementById('bizPhone').value = '';
-}
+function submitClaim(){ alert('درخواست ثبت شد ✅'); document.getElementById('claim').classList.add('hidden'); document.getElementById('claim').classList.remove('flex'); }
 
 renderCats();
 render();
