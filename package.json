@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "mkdir -p www && cp index.html www/index.html && cp privacy.html www/privacy.html"
+    "build": "mkdir -p www && cp index.html privacy.html www/ && cp -r assets www/assets 2>/dev/null || true"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
