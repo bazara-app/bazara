@@ -117,18 +117,29 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   {id:'agri', name:'کشاورزی و عمده', icon:'🌾'},
 ];
 
-const BIZ = [
-  {id:1, name:'کافه ونیز', cat:'food', sub:'کافه', area:'معالی‌آباد', rating:4.7, reviews:82, phone:'09170000001', desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=250&fit=crop', plan:'premium'},
-  {id:2, name:'رستوران هفت‌خوان', cat:'food', sub:'رستوران', area:'قصردشت', rating:4.5, reviews:210, phone:'09170000002', desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop', plan:'pro'},
-  {id:3, name:'فست‌فود برگرلند', cat:'food', sub:'فست‌فود', area:'زندیه', rating:4.3, reviews:156, phone:'09170000003', desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop', plan:'free'},
-  {id:4, name:'قنادی گلستان', cat:'food', sub:'قنادی', area:'حافظیه', rating:4.8, reviews:340, phone:'09170000004', desc:'شیرینی سنتی شیرازی', img:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&h=250&fit=crop', plan:'pro'},
-  {id:5, name:'آرایشگاه رویال', cat:'beauty', sub:'آرایشگاه مردانه', area:'بلوار رحمت', rating:4.6, reviews:95, phone:'09170000005', desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=250&fit=crop', plan:'free'},
-  {id:6, name:'سالن زیبایی نیلا', cat:'beauty', sub:'سالن زیبایی', area:'ستارخان', rating:4.9, reviews:178, phone:'09170000006', desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop', plan:'premium'},
-  {id:7, name:'سوپرمارکت رفاه', cat:'shopping', sub:'مارکت', area:'فرهنگ‌شهر', rating:4.2, reviews:64, phone:'09170000007', desc:'خرید روزانه با قیمت مناسب', img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=250&fit=crop', plan:'free'},
-  {id:8, name:'میوه‌فروشی باغ', cat:'shopping', sub:'میوه تازه', area:'قدوسی', rating:4.4, reviews:41, phone:'09170000008', desc:'میوه تازه و ارسال رایگان', img:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=250&fit=crop', plan:'free'},
-  {id:9, name:'کافه کتاب', cat:'food', sub:'کافه', area:'ارم', rating:4.6, reviews:120, phone:'09170000009', desc:'کافه و کتاب‌فروشی', img:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&h=250&fit=crop', plan:'pro'},
-  {id:10, name:'کبابی شاطرعباس', cat:'food', sub:'کباب', area:'چهارراه مشیر', rating:4.7, reviews:290, phone:'09170000010', desc:'کباب کوبیده اصل', img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=250&fit=crop', plan:'free'},
-];
+let BIZ = [];
+
+async function loadBusinesses() {
+  const { data, error } = await sb.from('businesses').select('*');
+  if (error) { 
+    console.error(error); 
+    return; 
+  }
+  BIZ = data.map(b => ({
+    id: b.id,
+    name: b.name,
+    cat: b.category,
+    sub: b.subcategory,
+    area: b.area,
+    rating: b.rating,
+    reviews: b.reviews_count,
+    phone: b.phone,
+    desc: b.description,
+    img: b.image_url,
+    plan: b.plan
+  }));
+  render();
+}
 
 let selectedCat = 'all';
 
