@@ -51,13 +51,23 @@
 </section>
 
 <!-- لیست کسب‌وکارها -->
-<section class="max-w-5xl mx-auto px-4 pt-8 pb-24">
+<section class="max-w-5xl mx-auto px-4 pt-8 pb-4">
   <div class="flex items-center justify-between mb-3">
     <h2 id="title" class="font-bold text-base">همه کسب‌وکارها</h2>
     <span id="count" class="text-xs text-neutral-500"></span>
   </div>
   <div id="list" class="grid gap-3 md:grid-cols-3"></div>
 </section>
+
+<!-- فوتر حقوقی -->
+<footer class="max-w-5xl mx-auto px-4 pb-28 pt-8 text-center text-xs text-neutral-500 border-t border-neutral-200">
+  <p class="mb-3">اطلاعات این کسب‌وکارها از منابع عمومی جمع‌آوری شده است.</p>
+  <div class="flex items-center justify-center gap-4">
+    <a href="privacy.html" class="text-emerald-600 hover:underline font-semibold">سیاست حریم خصوصی</a>
+    <span>|</span>
+    <button onclick="openRemoveModal()" class="text-red-500 hover:underline font-semibold">درخواست حذف کسب‌وکار</button>
+  </div>
+</footer>
 
 <!-- نوار پایین -->
 <nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40">
@@ -93,6 +103,19 @@
     <input id="bizName" placeholder="نام کسب‌وکار" class="w-full border rounded-xl px-3 py-3 mb-2 text-sm">
     <input id="bizPhone" placeholder="شماره تماس" class="w-full border rounded-xl px-3 py-3 mb-3 text-sm">
     <button onclick="submitClaim()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">ثبت درخواست</button>
+  </div>
+</div>
+
+<!-- مودال درخواست حذف -->
+<div id="removeModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center">
+    <h3 class="font-bold text-lg mb-2 text-red-600">درخواست حذف کسب‌وکار</h3>
+    <p class="text-sm text-neutral-600 mb-5 leading-relaxed">اگر صاحب این کسب‌وکار هستید و مایل به حذف اطلاعات خود از بازارا نیستید، از طریق راه‌های زیر با ما در تماس باشید. اطلاعات شما حداکثر تا ۴۸ ساعت حذف خواهد شد.</p>
+    
+    <a href="mailto:support@bazara.ir?subject=درخواست حذف کسب‌وکار&body=سلام، لطفا اطلاعات کسب‌وکار من را از اپلیکیشن بازارا حذف کنید.%0Aنام کسب‌وکار: " class="block w-full bg-neutral-800 text-white py-3 rounded-xl font-semibold mb-2 text-sm">ارسال ایمیل</a>
+    <a href="https://wa.me/989170000000?text=سلام، درخواست حذف کسب‌وکار من از اپ بازارا را دارم." class="block w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold text-sm">تماس در واتساپ</a>
+    
+    <button onclick="document.getElementById('removeModal').classList.add('hidden');document.getElementById('removeModal').classList.remove('flex')" class="mt-4 text-xs text-neutral-400">بستن</button>
   </div>
 </div>
 
@@ -278,6 +301,12 @@ function openLogin(){ const l = document.getElementById('login'); l.classList.re
 function sendOtp(){ alert('نسخه آزمایشی: ثبت‌نام شبیه‌سازی شد ✅'); document.getElementById('login').classList.add('hidden'); document.getElementById('login').classList.remove('flex'); }
 function openClaim(){ const c = document.getElementById('claim'); c.classList.remove('hidden'); c.classList.add('flex'); }
 function submitClaim(){ alert('درخواست ثبت شد ✅'); document.getElementById('claim').classList.add('hidden'); document.getElementById('claim').classList.remove('flex'); }
+
+function openRemoveModal(){ 
+  const r = document.getElementById('removeModal'); 
+  r.classList.remove('hidden'); 
+  r.classList.add('flex'); 
+}
 
 renderCats();
 render();
