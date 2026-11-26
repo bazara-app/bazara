@@ -86,23 +86,22 @@
 
 <!-- مودال ورود -->
 <div id="login" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
-  <div class="bg-white w-full max-w-sm rounded-3xl p-6">
-    <h3 class="font-bold text-lg mb-1">ورود / ثبت‌نام</h3>
-    <p class="text-xs text-neutral-500 mb-4">شماره موبایلت را وارد کن</p>
-    <input id="phone" type="tel" placeholder="09xxxxxxxxx" class="w-full border rounded-xl px-3 py-3 text-center tracking-widest">
-    <button onclick="sendOtp()" class="mt-3 w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">دریافت کد</button>
-    <p class="text-[11px] text-neutral-400 mt-3 text-center">در نسخه آزمایشی، کد پیامک نمی‌شود</p>
+  <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center">
+    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">👋</div>
+    <h3 class="font-bold text-lg mb-2">به بازارا خوش آمدید</h3>
+    <p class="text-sm text-neutral-500 mb-6 leading-relaxed">قابلیت ثبت‌نام و ورود با شماره موبایل در نسخه‌های بعدی فعال خواهد شد. در حال حاضر می‌توانید از تمام امکانات جستجو و مسیریابی به صورت رایگان استفاده کنید.</p>
+    <button onclick="document.getElementById('login').classList.add('hidden');document.getElementById('login').classList.remove('flex')" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">متوجه شدم</button>
   </div>
 </div>
 
 <!-- مودال Claim -->
 <div id="claim" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
   <div class="bg-white w-full max-w-sm rounded-3xl p-6">
-    <h3 class="font-bold text-lg mb-1">این کسب‌وکار من است</h3>
-    <p class="text-xs text-neutral-500 mb-4">نام کسب‌وکار و شماره‌ات را وارد کن تا پروفایل را Claim کنیم</p>
+    <h3 class="font-bold text-lg mb-1">ثبت کسب‌وکار جدید</h3>
+    <p class="text-xs text-neutral-500 mb-4">اگر صاحب کسب‌وکاری هستید که در بازارا نیست، اطلاعات آن را وارد کنید تا رایگان ثبت شود.</p>
     <input id="bizName" placeholder="نام کسب‌وکار" class="w-full border rounded-xl px-3 py-3 mb-2 text-sm">
     <input id="bizPhone" placeholder="شماره تماس" class="w-full border rounded-xl px-3 py-3 mb-3 text-sm">
-    <button onclick="submitClaim()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">ثبت درخواست</button>
+    <button onclick="submitClaim()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">ارسال درخواست</button>
   </div>
 </div>
 
@@ -137,82 +136,82 @@ const CATS = [
 
 const BIZ = [
   // --- غذا و نوشیدنی (۱۰ مورد) ---
-  {id:1, name:'کافه ونیز', cat:'food', sub:'کافه', area:'معالی‌آباد', rating:4.7, reviews:82, phone:'09170000001', desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=250&fit=crop', plan:'premium'},
-  {id:2, name:'رستوران هفت‌خوان', cat:'food', sub:'رستوران', area:'قصردشت', rating:4.5, reviews:210, phone:'09170000002', desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop', plan:'pro'},
-  {id:3, name:'فست‌فود برگرلند', cat:'food', sub:'فست‌فود', area:'زندیه', rating:4.3, reviews:156, phone:'09170000003', desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop', plan:'free'},
-  {id:4, name:'قنادی گلستان', cat:'food', sub:'قنادی', area:'حافظیه', rating:4.8, reviews:340, phone:'09170000004', desc:'شیرینی سنتی شیرازی', img:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&h=250&fit=crop', plan:'pro'},
-  {id:9, name:'کافه کتاب', cat:'food', sub:'کافه', area:'ارم', rating:4.6, reviews:120, phone:'09170000009', desc:'کافه و کتاب‌فروشی', img:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&h=250&fit=crop', plan:'pro'},
-  {id:10, name:'کبابی شاطرعباس', cat:'food', sub:'کباب', area:'چهارراه مشیر', rating:4.7, reviews:290, phone:'09170000010', desc:'کباب کوبیده اصل', img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=250&fit=crop', plan:'free'},
-  {id:11, name:'کافه راز', cat:'food', sub:'کافه', area:'بلوار چمران', rating:4.4, reviews:88, phone:'09171111111', desc:'فضای دنج و آرام برای مطالعه', img:'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=400&h=250&fit=crop', plan:'free'},
-  {id:12, name:'رستوران شاطر', cat:'food', sub:'رستوران', area:'معالی‌آباد', rating:4.2, reviews:130, phone:'09172222222', desc:'انواع غذاهای ایرانی', img:'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=250&fit=crop', plan:'free'},
-  {id:13, name:'پیتزا سیب', cat:'food', sub:'فست‌فود', area:'قدوسی غربی', rating:4.6, reviews:400, phone:'09173333333', desc:'پیتزاهای خوشمزه با پنیر پیتزا', img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=250&fit=crop', plan:'premium'},
-  {id:14, name:'آبمیوه بستنی هدیش', cat:'food', sub:'آبمیوه', area:'زندیه', rating:4.8, reviews:210, phone:'09174444444', desc:'آبمیوه طبیعی و بستنی سنتی', img:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=250&fit=crop', plan:'free'},
+  {id:1, name:'کافه ونیز', cat:'food', sub:'کافه', area:'معالی‌آباد', rating:4.7, reviews:82, desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=250&fit=crop', plan:'premium'},
+  {id:2, name:'رستوران هفت‌خوان', cat:'food', sub:'رستوران', area:'قصردشت', rating:4.5, reviews:210, desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop', plan:'pro'},
+  {id:3, name:'فست‌فود برگرلند', cat:'food', sub:'فست‌فود', area:'زندیه', rating:4.3, reviews:156, desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop', plan:'free'},
+  {id:4, name:'قنادی گلستان', cat:'food', sub:'قنادی', area:'حافظیه', rating:4.8, reviews:340, desc:'شیرینی سنتی شیرازی', img:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&h=250&fit=crop', plan:'pro'},
+  {id:9, name:'کافه کتاب', cat:'food', sub:'کافه', area:'ارم', rating:4.6, reviews:120, desc:'کافه و کتاب‌فروشی', img:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&h=250&fit=crop', plan:'pro'},
+  {id:10, name:'کبابی شاطرعباس', cat:'food', sub:'کباب', area:'چهارراه مشیر', rating:4.7, reviews:290, desc:'کباب کوبیده اصل', img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=250&fit=crop', plan:'free'},
+  {id:11, name:'کافه راز', cat:'food', sub:'کافه', area:'بلوار چمران', rating:4.4, reviews:88, desc:'فضای دنج و آرام برای مطالعه', img:'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=400&h=250&fit=crop', plan:'free'},
+  {id:12, name:'رستوران شاطر', cat:'food', sub:'رستوران', area:'معالی‌آباد', rating:4.2, reviews:130, desc:'انواع غذاهای ایرانی', img:'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=250&fit=crop', plan:'free'},
+  {id:13, name:'پیتزا سیب', cat:'food', sub:'فست‌فود', area:'قدوسی غربی', rating:4.6, reviews:400, desc:'پیتزاهای خوشمزه با پنیر پیتزا', img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=250&fit=crop', plan:'premium'},
+  {id:14, name:'آبمیوه بستنی هدیش', cat:'food', sub:'آبمیوه', area:'زندیه', rating:4.8, reviews:210, desc:'آبمیوه طبیعی و بستنی سنتی', img:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=250&fit=crop', plan:'free'},
 
   // --- زیبایی و آرایش (۴ مورد) ---
-  {id:5, name:'آرایشگاه رویال', cat:'beauty', sub:'آرایشگاه مردانه', area:'بلوار رحمت', rating:4.6, reviews:95, phone:'09170000005', desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=250&fit=crop', plan:'free'},
-  {id:6, name:'سالن زیبایی نیلا', cat:'beauty', sub:'سالن زیبایی', area:'ستارخان', rating:4.9, reviews:178, phone:'09170000006', desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop', plan:'premium'},
-  {id:15, name:'آرایشگاه ژاویه', cat:'beauty', sub:'آرایشگاه مردانه', area:'قصردشت', rating:4.5, reviews:64, phone:'09175555555', desc:'اصلاح و ماساژ صورت', img:'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=250&fit=crop', plan:'free'},
-  {id:16, name:'کلینیک زیبایی درسا', cat:'beauty', sub:'کلینیک پوست', area:'معالی‌آباد', rating:4.8, reviews:200, phone:'09176666666', desc:'خدمات تخصصی پوست و مو', img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=250&fit=crop', plan:'pro'},
+  {id:5, name:'آرایشگاه رویال', cat:'beauty', sub:'آرایشگاه مردانه', area:'بلوار رحمت', rating:4.6, reviews:95, desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=250&fit=crop', plan:'free'},
+  {id:6, name:'سالن زیبایی نیلا', cat:'beauty', sub:'سالن زیبایی', area:'ستارخان', rating:4.9, reviews:178, desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop', plan:'premium'},
+  {id:15, name:'آرایشگاه ژاویه', cat:'beauty', sub:'آرایشگاه مردانه', area:'قصردشت', rating:4.5, reviews:64, desc:'اصلاح و ماساژ صورت', img:'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=250&fit=crop', plan:'free'},
+  {id:16, name:'کلینیک زیبایی درسا', cat:'beauty', sub:'کلینیک پوست', area:'معالی‌آباد', rating:4.8, reviews:200, desc:'خدمات تخصصی پوست و مو', img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=250&fit=crop', plan:'pro'},
 
   // --- خرید و مارکت (۴ مورد) ---
-  {id:7, name:'سوپرمارکت رفاه', cat:'shopping', sub:'مارکت', area:'فرهنگ‌شهر', rating:4.2, reviews:64, phone:'09170000007', desc:'خرید روزانه با قیمت مناسب', img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=250&fit=crop', plan:'free'},
-  {id:8, name:'میوه‌فروشی باغ', cat:'shopping', sub:'میوه تازه', area:'قدوسی', rating:4.4, reviews:41, phone:'09170000008', desc:'میوه تازه و ارسال رایگان', img:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=250&fit=crop', plan:'free'},
-  {id:17, name:'هایپراستار شیراز', cat:'shopping', sub:'هایپر', area:'بلوار چمران', rating:4.7, reviews:800, phone:'09177777777', desc:'خرید عمده و خرده', img:'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&h=250&fit=crop', plan:'pro'},
-  {id:18, name:'پروتئین‌شاپ قهرمان', cat:'shopping', sub:'مکمل ورزشی', area:'زندیه', rating:4.9, reviews:110, phone:'09178888888', desc:'انواع مکمل‌های بدنسازی اصل', img:'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&h=250&fit=crop', plan:'premium'},
+  {id:7, name:'سوپرمارکت رفاه', cat:'shopping', sub:'مارکت', area:'فرهنگ‌شهر', rating:4.2, reviews:64, desc:'خرید روزانه با قیمت مناسب', img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=250&fit=crop', plan:'free'},
+  {id:8, name:'میوه‌فروشی باغ', cat:'shopping', sub:'میوه تازه', area:'قدوسی', rating:4.4, reviews:41, desc:'میوه تازه و ارسال رایگان', img:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=250&fit=crop', plan:'free'},
+  {id:17, name:'هایپراستار شیراز', cat:'shopping', sub:'هایپر', area:'بلوار چمران', rating:4.7, reviews:800, desc:'خرید عمده و خرده', img:'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&h=250&fit=crop', plan:'pro'},
+  {id:18, name:'پروتئین‌شاپ قهرمان', cat:'shopping', sub:'مکمل ورزشی', area:'زندیه', rating:4.9, reviews:110, desc:'انواع مکمل‌های بدنسازی اصل', img:'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&h=250&fit=crop', plan:'premium'},
 
   // --- سلامت و درمان (۴ مورد) ---
-  {id:19, name:'دکتر محمدی (دندانپزشک)', cat:'health', sub:'دندانپزشکی', area:'معالی‌آباد', rating:4.8, reviews:150, phone:'09171111222', desc:'دندانپزشکی زیبایی و ایمپلنت', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=250&fit=crop', plan:'premium'},
-  {id:20, name:'داروخانه شبانه‌روزی', cat:'health', sub:'داروخانه', area:'قصردشت', rating:4.5, reviews:80, phone:'09172222333', desc:'ارائه کلیه داروها در تمام ساعات', img:'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?w=400&h=250&fit=crop', plan:'free'},
-  {id:21, name:'کلینیک دامپزشکی پت', cat:'health', sub:'دامپزشکی', area:'بلوار رحمت', rating:4.7, reviews:60, phone:'09173333444', desc:'درمان و واکسیناسیون حیوانات', img:'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&h=250&fit=crop', plan:'pro'},
-  {id:22, name:'مرکز ماساژ آرامش', cat:'health', sub:'ماساژ', area:'فرهنگ‌شهر', rating:4.6, reviews:95, phone:'09174444555', desc:'ماساژ درمانی و ریلکسی', img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=250&fit=crop', plan:'free'},
+  {id:19, name:'دکتر محمدی (دندانپزشک)', cat:'health', sub:'دندانپزشکی', area:'معالی‌آباد', rating:4.8, reviews:150, desc:'دندانپزشکی زیبایی و ایمپلنت', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=250&fit=crop', plan:'premium'},
+  {id:20, name:'داروخانه شبانه‌روزی', cat:'health', sub:'داروخانه', area:'قصردشت', rating:4.5, reviews:80, desc:'ارائه کلیه داروها در تمام ساعات', img:'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?w=400&h=250&fit=crop', plan:'free'},
+  {id:21, name:'کلینیک دامپزشکی پت', cat:'health', sub:'دامپزشکی', area:'بلوار رحمت', rating:4.7, reviews:60, desc:'درمان و واکسیناسیون حیوانات', img:'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&h=250&fit=crop', plan:'pro'},
+  {id:22, name:'مرکز ماساژ آرامش', cat:'health', sub:'ماساژ', area:'فرهنگ‌شهر', rating:4.6, reviews:95, desc:'ماساژ درمانی و ریلکسی', img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=250&fit=crop', plan:'free'},
 
   // --- تعمیرات و خدمات خانه (۴ مورد) ---
-  {id:23, name:'لوله‌کشی برقکاری حرفه‌ای', cat:'repair', sub:'تاسیسات', area:'کل شیراز', rating:4.9, reviews:120, phone:'09175555666', desc:'خدمات ۲۴ ساعته لوله‌کشی و برق', img:'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=250&fit=crop', plan:'pro'},
-  {id:24, name:'تعمیرات موبایل هوشمند', cat:'repair', sub:'موبایل', area:'چهارراه مشیر', rating:4.4, reviews:200, phone:'09176666777', desc:'تعویض ال‌سی‌دی و باتری', img:'https://images.unsplash.com/photo-1598327105666-5b89351cb31b?w=400&h=250&fit=crop', plan:'free'},
-  {id:25, name:'نجاری و کابینت سازی', cat:'repair', sub:'نجاری', area:'قصردشت', rating:4.7, reviews:45, phone:'09177777888', desc:'ساخت کابینت و ام‌دی‌اف', img:'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400&h=250&fit=crop', plan:'free'},
-  {id:26, name:'تعمیرگاه لوازم خانگی', cat:'repair', sub:'لوازم خانگی', area:'زندیه', rating:4.3, reviews:55, phone:'09178888999', desc:'تعمیر لباسشویی و یخچال', img:'https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=400&h=250&fit=crop', plan:'free'},
+  {id:23, name:'لوله‌کشی برقکاری حرفه‌ای', cat:'repair', sub:'تاسیسات', area:'کل شیراز', rating:4.9, reviews:120, desc:'خدمات ۲۴ ساعته لوله‌کشی و برق', img:'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=250&fit=crop', plan:'pro'},
+  {id:24, name:'تعمیرات موبایل هوشمند', cat:'repair', sub:'موبایل', area:'چهارراه مشیر', rating:4.4, reviews:200, desc:'تعویض ال‌سی‌دی و باتری', img:'https://images.unsplash.com/photo-1598327105666-5b89351cb31b?w=400&h=250&fit=crop', plan:'free'},
+  {id:25, name:'نجاری و کابینت سازی', cat:'repair', sub:'نجاری', area:'قصردشت', rating:4.7, reviews:45, desc:'ساخت کابینت و ام‌دی‌اف', img:'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400&h=250&fit=crop', plan:'free'},
+  {id:26, name:'تعمیرگاه لوازم خانگی', cat:'repair', sub:'لوازم خانگی', area:'زندیه', rating:4.3, reviews:55, desc:'تعمیر لباسشویی و یخچال', img:'https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=400&h=250&fit=crop', plan:'free'},
 
   // --- خودرو (۴ مورد) ---
-  {id:27, name:'اتوسرویس پارس', cat:'auto', sub:'مکانیکی', area:'بلوار امیرکبیر', rating:4.6, reviews:80, phone:'09171111333', desc:'تعمیرات تخصصی خودروهای ایرانی', img:'https://images.unsplash.com/photo-1613214149922-f1809c99c9a1?w=400&h=250&fit=crop', plan:'pro'},
-  {id:28, name:'کارواش نانو', cat:'auto', sub:'کارواش', area:'معالی‌آباد', rating:4.8, reviews:150, phone:'09172222444', desc:'شستشوی نانو و دیتیلینگ', img:'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?w=400&h=250&fit=crop', plan:'premium'},
-  {id:29, name:'آپاراتی و لاستیک فروشی', cat:'auto', sub:'لاستیک', area:'زندیه', rating:4.2, reviews:60, phone:'09173333555', desc:'فروش و نصب انواع لاستیک', img:'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=400&h=250&fit=crop', plan:'free'},
-  {id:30, name:'دینام و استارت', cat:'auto', sub:'برق خودرو', area:'قصردشت', rating:4.5, reviews:40, phone:'09174444666', desc:'تعمیر دینام و استارت', img:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=250&fit=crop', plan:'free'},
+  {id:27, name:'اتوسرویس پارس', cat:'auto', sub:'مکانیکی', area:'بلوار امیرکبیر', rating:4.6, reviews:80, desc:'تعمیرات تخصصی خودروهای ایرانی', img:'https://images.unsplash.com/photo-1613214149922-f1809c99c9a1?w=400&h=250&fit=crop', plan:'pro'},
+  {id:28, name:'کارواش نانو', cat:'auto', sub:'کارواش', area:'معالی‌آباد', rating:4.8, reviews:150, desc:'شستشوی نانو و دیتیلینگ', img:'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?w=400&h=250&fit=crop', plan:'premium'},
+  {id:29, name:'آپاراتی و لاستیک فروشی', cat:'auto', sub:'لاستیک', area:'زندیه', rating:4.2, reviews:60, desc:'فروش و نصب انواع لاستیک', img:'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=400&h=250&fit=crop', plan:'free'},
+  {id:30, name:'دینام و استارت', cat:'auto', sub:'برق خودرو', area:'قصردشت', rating:4.5, reviews:40, desc:'تعمیر دینام و استارت', img:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=250&fit=crop', plan:'free'},
 
   // --- ورزش (۴ مورد) ---
-  {id:31, name:'باشگاه بدنسازی آهن', cat:'fitness', sub:'بدنسازی', area:'معالی‌آباد', rating:4.7, reviews:130, phone:'09175555777', desc:'مجهز به بهترین دستگاه‌ها', img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=250&fit=crop', plan:'pro'},
-  {id:32, name:'استخر پوریا', cat:'fitness', sub:'استخر', area:'قصردشت', rating:4.4, reviews:80, phone:'09176666888', desc:'استخر سرپوشیده با مربی', img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=250&fit=crop', plan:'free'},
-  {id:33, name:'باشگاه رزمی', cat:'fitness', sub:'رزمی', area:'فرهنگ‌شهر', rating:4.9, reviews:50, phone:'09177777999', desc:'آموزش کاراته و MMA', img:'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400&h=250&fit=crop', plan:'pro'},
-  {id:34, name:'پارک ورزشی شهر', cat:'fitness', sub:'پارک', area:'بلوار چمران', rating:4.6, reviews:200, phone:'09178888000', desc:'فضای باز برای ورزش صبحگاهی', img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=250&fit=crop', plan:'free'},
+  {id:31, name:'باشگاه بدنسازی آهن', cat:'fitness', sub:'بدنسازی', area:'معالی‌آباد', rating:4.7, reviews:130, desc:'مجهز به بهترین دستگاه‌ها', img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=250&fit=crop', plan:'pro'},
+  {id:32, name:'استخر پوریا', cat:'fitness', sub:'استخر', area:'قصردشت', rating:4.4, reviews:80, desc:'استخر سرپوشیده با مربی', img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=250&fit=crop', plan:'free'},
+  {id:33, name:'باشگاه رزمی', cat:'fitness', sub:'رزمی', area:'فرهنگ‌شهر', rating:4.9, reviews:50, desc:'آموزش کاراته و MMA', img:'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400&h=250&fit=crop', plan:'pro'},
+  {id:34, name:'پارک ورزشی شهر', cat:'fitness', sub:'پارک', area:'بلوار چمران', rating:4.6, reviews:200, desc:'فضای باز برای ورزش صبحگاهی', img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=250&fit=crop', plan:'free'},
 
   // --- آموزش (۴ مورد) ---
-  {id:35, name:'آموزشگاه زبان آکسفورد', cat:'education', sub:'زبان انگلیسی', area:'معالی‌آباد', rating:4.8, reviews:300, phone:'09171111555', desc:'تدریس تخصصی IELTS', img:'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=400&h=250&fit=crop', plan:'premium'},
-  {id:36, name:'آموزشگاه کنکور', cat:'education', sub:'کنکور', area:'زندیه', rating:4.5, reviews:150, phone:'09172222666', desc:'کلاس‌های ریاضی و فیزیک', img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=250&fit=crop', plan:'pro'},
-  {id:37, name:'کلاس موسیقی', cat:'education', sub:'موسیقی', area:'قصردشت', rating:4.7, reviews:80, phone:'09173333777', desc:'آموزش گیتار و پیانو', img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=250&fit=crop', plan:'free'},
-  {id:38, name:'کلاس نقاشی', cat:'education', sub:'هنر', area:'حافظیه', rating:4.9, reviews:60, phone:'09174444888', desc:'آموزش سیاه‌قلم و رنگ روغن', img:'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=250&fit=crop', plan:'free'},
+  {id:35, name:'آموزشگاه زبان آکسفورد', cat:'education', sub:'زبان انگلیسی', area:'معالی‌آباد', rating:4.8, reviews:300, desc:'تدریس تخصصی IELTS', img:'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=400&h=250&fit=crop', plan:'premium'},
+  {id:36, name:'آموزشگاه کنکور', cat:'education', sub:'کنکور', area:'زندیه', rating:4.5, reviews:150, desc:'کلاس‌های ریاضی و فیزیک', img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=250&fit=crop', plan:'pro'},
+  {id:37, name:'کلاس موسیقی', cat:'education', sub:'موسیقی', area:'قصردشت', rating:4.7, reviews:80, desc:'آموزش گیتار و پیانو', img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=250&fit=crop', plan:'free'},
+  {id:38, name:'کلاس نقاشی', cat:'education', sub:'هنر', area:'حافظیه', rating:4.9, reviews:60, desc:'آموزش سیاه‌قلم و رنگ روغن', img:'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=250&fit=crop', plan:'free'},
 
   // --- پوشاک و مد (۴ مورد) ---
-  {id:39, name:'بوتیک پوشاک', cat:'fashion', sub:'لباس زنانه', area:'بلوار رحمت', rating:4.6, reviews:120, phone:'09175555999', desc:'لباس‌های مجلسی و اسپرت', img:'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=250&fit=crop', plan:'pro'},
-  {id:40, name:'کفش فروشی', cat:'fashion', sub:'کفش', area:'زندیه', rating:4.3, reviews:90, phone:'09176666000', desc:'انواع کفش چرم و اسپرت', img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=250&fit=crop', plan:'free'},
-  {id:41, name:'مانتو فروشی', cat:'fashion', sub:'مانتو', area:'معالی‌آباد', rating:4.8, reviews:200, phone:'09177777111', desc:'مانتوهای جدید و شیک', img:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=250&fit=crop', plan:'free'},
-  {id:42, name:'بوتیک مردانه', cat:'fashion', sub:'لباس مردانه', area:'قصردشت', rating:4.5, reviews:50, phone:'09178888222', desc:'کت و شلوار و لباس اسپرت', img:'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=400&h=250&fit=crop', plan:'free'},
+  {id:39, name:'بوتیک پوشاک', cat:'fashion', sub:'لباس زنانه', area:'بلوار رحمت', rating:4.6, reviews:120, desc:'لباس‌های مجلسی و اسپرت', img:'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=250&fit=crop', plan:'pro'},
+  {id:40, name:'کفش فروشی', cat:'fashion', sub:'کفش', area:'زندیه', rating:4.3, reviews:90, desc:'انواع کفش چرم و اسپرت', img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=250&fit=crop', plan:'free'},
+  {id:41, name:'مانتو فروشی', cat:'fashion', sub:'مانتو', area:'معالی‌آباد', rating:4.8, reviews:200, desc:'مانتوهای جدید و شیک', img:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=250&fit=crop', plan:'free'},
+  {id:42, name:'بوتیک مردانه', cat:'fashion', sub:'لباس مردانه', area:'قصردشت', rating:4.5, reviews:50, desc:'کت و شلوار و لباس اسپرت', img:'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=400&h=250&fit=crop', plan:'free'},
 
   // --- حیوانات خانگی (۴ مورد) ---
-  {id:43, name:'پت شاپ پری', cat:'pets', sub:'پت شاپ', area:'معالی‌آباد', rating:4.7, reviews:110, phone:'09171111777', desc:'غذا و لوازم حیوانات', img:'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=250&fit=crop', plan:'free'},
-  {id:44, name:'پانسیون حیوانات', cat:'pets', sub:'پانسیون', area:'بلوار چمران', rating:4.8, reviews:60, phone:'09172222888', desc:'نگهداری سگ و گربه', img:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=250&fit=crop', plan:'pro'},
-  {id:45, name:'فروشگاه ماهی', cat:'pets', sub:'ماهی', area:'زندیه', rating:4.4, reviews:40, phone:'09173333999', desc:'ماهی زینتی و آکواریوم', img:'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&h=250&fit=crop', plan:'free'},
-  {id:46, name:'پرنده فروشی', cat:'pets', sub:'پرنده', area:'قصردشت', rating:4.5, reviews:70, phone:'09174444000', desc:'قناری و طوطی', img:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=250&fit=crop', plan:'free'},
+  {id:43, name:'پت شاپ پری', cat:'pets', sub:'پت شاپ', area:'معالی‌آباد', rating:4.7, reviews:110, desc:'غذا و لوازم حیوانات', img:'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=250&fit=crop', plan:'free'},
+  {id:44, name:'پانسیون حیوانات', cat:'pets', sub:'پانسیون', area:'بلوار چمران', rating:4.8, reviews:60, desc:'نگهداری سگ و گربه', img:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=250&fit=crop', plan:'pro'},
+  {id:45, name:'فروشگاه ماهی', cat:'pets', sub:'ماهی', area:'زندیه', rating:4.4, reviews:40, desc:'ماهی زینتی و آکواریوم', img:'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&h=250&fit=crop', plan:'free'},
+  {id:46, name:'پرنده فروشی', cat:'pets', sub:'پرنده', area:'قصردشت', rating:4.5, reviews:70, desc:'قناری و طوطی', img:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=250&fit=crop', plan:'free'},
 
   // --- سفر و اقامت (۴ مورد) ---
-  {id:47, name:'آژانس مسافرتی', cat:'travel', sub:'آژانس', area:'معالی‌آباد', rating:4.6, reviews:150, phone:'09175555111', desc:'تورهای داخلی و خارجی', img:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=250&fit=crop', plan:'pro'},
-  {id:48, name:'هتل بزرگ شیراز', cat:'travel', sub:'هتل', area:'چمران', rating:4.9, reviews:900, phone:'09176666222', desc:'اقامت لوکس و رستوران', img:'https://images.unsplash.com/photo-1542314831-c6a4d1424b09?w=400&h=250&fit=crop', plan:'premium'},
-  {id:49, name:'اقامتگاه بومگردی', cat:'travel', sub:'بومگردی', area:'حافظیه', rating:4.8, reviews:200, phone:'09177777333', desc:'تجربه زندگی سنتی', img:'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400&h=250&fit=crop', plan:'free'},
-  {id:50, name:'اجاره ماشین', cat:'travel', sub:'اجاره خودرو', area:'فرودگاه', rating:4.4, reviews:80, phone:'09178888444', desc:'اجاره خودروهای صفر', img:'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=250&fit=crop', plan:'free'},
+  {id:47, name:'آژانس مسافرتی', cat:'travel', sub:'آژانس', area:'معالی‌آباد', rating:4.6, reviews:150, desc:'تورهای داخلی و خارجی', img:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=250&fit=crop', plan:'pro'},
+  {id:48, name:'هتل بزرگ شیراز', cat:'travel', sub:'هتل', area:'چمران', rating:4.9, reviews:900, desc:'اقامت لوکس و رستوران', img:'https://images.unsplash.com/photo-1542314831-c6a4d1424b09?w=400&h=250&fit=crop', plan:'premium'},
+  {id:49, name:'اقامتگاه بومگردی', cat:'travel', sub:'بومگردی', area:'حافظیه', rating:4.8, reviews:200, desc:'تجربه زندگی سنتی', img:'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400&h=250&fit=crop', plan:'free'},
+  {id:50, name:'اجاره ماشین', cat:'travel', sub:'اجاره خودرو', area:'فرودگاه', rating:4.4, reviews:80, desc:'اجاره خودروهای صفر', img:'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=250&fit=crop', plan:'free'},
 
   // --- کشاورزی و عمده (۴ مورد) ---
-  {id:51, name:'میوه و تره بار عمده', cat:'agri', sub:'عمده فروشی', area:'میدان مرکزی', rating:4.5, reviews:60, phone:'09171111999', desc:'تامین میوه رستوران‌ها', img:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=250&fit=crop', plan:'pro'},
-  {id:52, name:'گلخانه گیاهان آپارتمانی', cat:'agri', sub:'گل و گیاه', area:'بلوار رحمت', rating:4.7, reviews:110, phone:'09172222000', desc:'فروش انواع گیاهان', img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=250&fit=crop', plan:'free'},
-  {id:53, name:'تامین مرغ و گوشت', cat:'agri', sub:'پروتئین', area:'زندیه', rating:4.3, reviews:80, phone:'09173333111', desc:'تامین عمده رستوران‌ها', img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=250&fit=crop', plan:'free'},
-  {id:54, name:'لبنیات سنتی', cat:'agri', sub:'لبنیات', area:'قصردشت', rating:4.9, reviews:150, phone:'09174444222', desc:'ماست و پنیر محلی', img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&h=250&fit=crop', plan:'free'}
+  {id:51, name:'میوه و تره بار عمده', cat:'agri', sub:'عمده فروشی', area:'میدان مرکزی', rating:4.5, reviews:60, desc:'تامین میوه رستوران‌ها', img:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=250&fit=crop', plan:'pro'},
+  {id:52, name:'گلخانه گیاهان آپارتمانی', cat:'agri', sub:'گل و گیاه', area:'بلوار رحمت', rating:4.7, reviews:110, desc:'فروش انواع گیاهان', img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=250&fit=crop', plan:'free'},
+  {id:53, name:'تامین مرغ و گوشت', cat:'agri', sub:'پروتئین', area:'زندیه', rating:4.3, reviews:80, desc:'تامین عمده رستوران‌ها', img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=250&fit=crop', plan:'free'},
+  {id:54, name:'لبنیات سنتی', cat:'agri', sub:'لبنیات', area:'قصردشت', rating:4.9, reviews:150, desc:'ماست و پنیر محلی', img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&h=250&fit=crop', plan:'free'}
 ];
 
 let selectedCat = 'all';
@@ -269,6 +268,15 @@ function render(){
 function openBiz(id){
   const b = BIZ.find(x=>x.id===id);
   const cat = CATS.find(c=>c.id===b.cat);
+  
+  // ساخت لینک مسیریابی گوگل مپ
+  const mapQuery = encodeURIComponent(`${b.name} ${b.area} شیراز`);
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+  
+  // ساخت لینک جستجوی اینستاگرام در گوگل
+  const instaQuery = encodeURIComponent(`اینستاگرام ${b.name} ${b.area} شیراز`);
+  const instaUrl = `https://www.google.com/search?q=${instaQuery}`;
+
   document.getElementById('modalBody').innerHTML = `
     <div class="relative h-56">
       <img src="${b.img}" class="w-full h-full object-cover">
@@ -286,10 +294,9 @@ function openBiz(id){
         <div class="flex items-center gap-2 text-neutral-600">🕐 هر روز ۹ تا ۲۳</div>
       </div>
       <div class="mt-5 grid grid-cols-2 gap-2">
-        <a href="tel:${b.phone}" class="bg-emerald-600 text-white text-center py-3 rounded-xl font-semibold text-sm">📞 تماس</a>
-        <button onclick="alert('به‌زودی: رزرو آنلاین')" class="bg-neutral-100 text-neutral-800 py-3 rounded-xl font-semibold text-sm">رزرو</button>
+        <a href="${mapUrl}" target="_blank" class="bg-emerald-600 text-white text-center py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-1">📍 مسیریابی</a>
+        <a href="${instaUrl}" target="_blank" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-center py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-1">📸 اینستاگرام</a>
       </div>
-      <button onclick="alert('به‌زودی: ثبت نظر')" class="mt-2 w-full text-sm text-emerald-700 py-2">✍️ ثبت نظر</button>
     </div>
   `;
   const m = document.getElementById('modal');
@@ -298,9 +305,22 @@ function openBiz(id){
 
 function closeModal(){ const m = document.getElementById('modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
 function openLogin(){ const l = document.getElementById('login'); l.classList.remove('hidden'); l.classList.add('flex'); }
-function sendOtp(){ alert('نسخه آزمایشی: ثبت‌نام شبیه‌سازی شد ✅'); document.getElementById('login').classList.add('hidden'); document.getElementById('login').classList.remove('flex'); }
 function openClaim(){ const c = document.getElementById('claim'); c.classList.remove('hidden'); c.classList.add('flex'); }
-function submitClaim(){ alert('درخواست ثبت شد ✅'); document.getElementById('claim').classList.add('hidden'); document.getElementById('claim').classList.remove('flex'); }
+
+function submitClaim(){ 
+  const n = document.getElementById('bizName').value.trim();
+  const p = document.getElementById('bizPhone').value.trim();
+  if(!n || !p) return alert('لطفا نام کسب‌وکار و شماره تماس را وارد کنید.');
+  
+  // ارسال اطلاعات به واتساپ (شماره خودت رو جایگزین کن)
+  const text = `سلام، من صاحب کسب‌وکار "${n}" هستم. شماره تماس من: ${p}. لطفا اطلاعات کسب‌وکار من را در اپلیکیشن بازارا ثبت کنید.`;
+  window.open(`https://wa.me/989170000000?text=${encodeURIComponent(text)}`, '_blank');
+  
+  document.getElementById('claim').classList.add('hidden'); 
+  document.getElementById('claim').classList.remove('flex'); 
+  document.getElementById('bizName').value = '';
+  document.getElementById('bizPhone').value = '';
+}
 
 function openRemoveModal(){ 
   const r = document.getElementById('removeModal'); 
