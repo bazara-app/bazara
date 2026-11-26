@@ -2,20 +2,32 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<!-- این خط جادویی برای حاشیه امن گوشی‌ها (Safe Area) -->
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#059669">
 <title>بازارا — شهرت را زندگی کن</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body{font-family:Vazirmatn,sans-serif; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);}
+  body {
+    font-family: Vazirmatn, sans-serif;
+    /* حذف پدینگ اضافی از بادی که باعث فاصله می‌شد */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #fafafa; /* رنگ پس‌زمینه ملایم */
+  }
   .line2{-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
-  .safe-header { padding-top: max(0.75rem, env(safe-area-inset-top)); }
-  .safe-nav { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+  /* تنظیم دقیق حاشیه امن برای هدر (بالا) */
+  .safe-header {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  /* تنظیم دقیق حاشیه امن برای منوی پایین */
+  .safe-nav {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
 </style>
 </head>
-<body class="bg-neutral-50 text-neutral-800">
+<body class="text-neutral-800">
 
 <!-- هدر -->
 <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral-200 safe-header">
@@ -28,19 +40,12 @@
   </div>
 </header>
 
-<!-- هیرو (شعار جدید سه لایه) -->
+<!-- هیرو -->
 <section class="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white px-4 pt-10 pb-10">
   <div class="max-w-5xl mx-auto text-center">
-    <!-- تیتر بزرگ -->
     <h1 class="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">شهرت را زندگی کن، دوباره کشف کن</h1>
-    
-    <!-- زیرنویس اول -->
     <p class="text-emerald-50 text-sm md:text-base font-medium mt-3">راهنمای هوشمند کسب‌وکارهای شهر، مقاصد خوب با یک کلیک</p>
-    
-    <!-- زیرنویس دوم (کوچکتر) -->
     <p class="text-emerald-100 text-xs md:text-sm mt-1.5 opacity-90">کافه، رستوران، آرایشگاه و هر چی که لازم داری</p>
-
-    <!-- کادر جستجو -->
     <div class="mt-6 flex gap-2 bg-white rounded-2xl shadow-lg p-1.5">
       <input id="q" oninput="render()" placeholder="دنبال چی می‌گردی؟" 
         class="flex-1 px-3 py-2.5 text-neutral-900 outline-none rounded-xl text-sm">
@@ -79,7 +84,7 @@
   </div>
 </footer>
 
-<!-- نوار پایین (فیکس شده با safe-nav) -->
+<!-- نوار پایین -->
 <nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40 safe-nav">
   <div class="max-w-5xl mx-auto grid grid-cols-4 text-[11px] font-medium text-neutral-500">
     <button class="py-3 flex flex-col items-center gap-1 text-emerald-600 active:bg-neutral-50"><span class="text-xl">🏠</span>خانه</button>
@@ -89,12 +94,11 @@
   </div>
 </nav>
 
-<!-- مودال جزئیات -->
+<!-- مودال‌ها (جزئیات، ورود، ثبت، حذف) بدون تغییر موندن -->
 <div id="modal" class="fixed inset-0 bg-black/50 z-50 hidden items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this)closeModal()">
   <div class="bg-white w-full max-w-lg rounded-t-3xl md:rounded-3xl max-h-[90vh] overflow-y-auto" id="modalBody"></div>
 </div>
 
-<!-- مودال ورود -->
 <div id="login" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
   <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center">
     <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">👋</div>
@@ -104,7 +108,6 @@
   </div>
 </div>
 
-<!-- مودال Claim -->
 <div id="claim" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
   <div class="bg-white w-full max-w-sm rounded-3xl p-6">
     <h3 class="font-bold text-lg mb-1">ثبت کسب‌وکار جدید</h3>
@@ -115,12 +118,12 @@
   </div>
 </div>
 
-<!-- مودال درخواست حذف -->
 <div id="removeModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
   <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center">
     <h3 class="font-bold text-lg mb-2 text-red-600">درخواست حذف کسب‌وکار</h3>
     <p class="text-sm text-neutral-600 mb-5 leading-relaxed">اگر صاحب این کسب‌وکار هستید و مایل به حذف اطلاعات خود از بازارا هستید، از طریق راه‌های زیر با ما در تماس باشید. اطلاعات شما حداکثر تا ۴۸ ساعت حذف خواهد شد.</p>
     
+    <!-- ⚠️ این خطوط رو بعدا با اطلاعات واقعی خودت عوض می‌کنیم -->
     <a href="mailto:support@bazara.ir?subject=درخواست حذف کسب‌وکار&body=سلام، لطفا اطلاعات کسب‌وکار من را از اپلیکیشن بازارا حذف کنید.%0Aنام کسب‌وکار: " class="block w-full bg-neutral-800 text-white py-3 rounded-xl font-semibold mb-2 text-sm">ارسال ایمیل</a>
     <a href="https://wa.me/989170000000?text=سلام، درخواست حذف کسب‌وکار من از اپ بازارا را دارم." class="block w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold text-sm">تماس در واتساپ</a>
     
@@ -130,18 +133,12 @@
 
 <script>
 const CATS = [
-  {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'},
-  {id:'beauty', name:'زیبایی و آرایش', icon:'💇'},
-  {id:'shopping', name:'خرید و مارکت', icon:'🛒'},
-  {id:'health', name:'سلامت و درمان', icon:'💊'},
-  {id:'repair', name:'تعمیرات خانه', icon:'🔧'},
-  {id:'auto', name:'خودرو', icon:'🚗'},
-  {id:'fitness', name:'ورزش', icon:'💪'},
-  {id:'education', name:'آموزش', icon:'📚'},
-  {id:'fashion', name:'پوشاک و مد', icon:'👕'},
-  {id:'pets', name:'حیوانات خانگی', icon:'🐾'},
-  {id:'travel', name:'سفر و اقامت', icon:'✈️'},
-  {id:'agri', name:'کشاورزی و عمده', icon:'🌾'},
+  {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'}, {id:'beauty', name:'زیبایی و آرایش', icon:'💇'},
+  {id:'shopping', name:'خرید و مارکت', icon:'🛒'}, {id:'health', name:'سلامت و درمان', icon:'💊'},
+  {id:'repair', name:'تعمیرات خانه', icon:'🔧'}, {id:'auto', name:'خودرو', icon:'🚗'},
+  {id:'fitness', name:'ورزش', icon:'💪'}, {id:'education', name:'آموزش', icon:'📚'},
+  {id:'fashion', name:'پوشاک و مد', icon:'👕'}, {id:'pets', name:'حیوانات خانگی', icon:'🐾'},
+  {id:'travel', name:'سفر و اقامت', icon:'✈️'}, {id:'agri', name:'کشاورزی و عمده', icon:'🌾'},
 ];
 
 const BIZ = [
