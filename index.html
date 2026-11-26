@@ -2,21 +2,23 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<!-- این خط جادویی برای حاشیه امن گوشی‌ها (Safe Area) -->
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#059669">
-<title>بازارا — هر کسب‌وکار، یک جستجو دورتر</title>
+<title>بازارا — شهرت را زندگی کن</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body{font-family:Vazirmatn,sans-serif}
-  .no-scroll::-webkit-scrollbar{display:none}
+  body{font-family:Vazirmatn,sans-serif; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);}
   .line2{-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .safe-header { padding-top: max(0.75rem, env(safe-area-inset-top)); }
+  .safe-nav { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
 </style>
 </head>
 <body class="bg-neutral-50 text-neutral-800">
 
 <!-- هدر -->
-<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral-200">
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral-200 safe-header">
   <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
     <div class="flex items-center gap-2">
       <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white grid place-items-center font-bold">ب</div>
@@ -26,12 +28,20 @@
   </div>
 </header>
 
-<!-- هیرو -->
-<section class="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white px-4 pt-8 pb-10">
+<!-- هیرو (شعار جدید سه لایه) -->
+<section class="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white px-4 pt-10 pb-10">
   <div class="max-w-5xl mx-auto text-center">
-    <h1 class="text-2xl md:text-4xl font-bold leading-tight">هر کسب‌وکار، یک جستجو دورتر</h1>
-    <p class="text-emerald-50 text-sm mt-2">کافه، رستوران، آرایشگاه، مارکت و هر چه لازم داری — در شیراز و به‌زودی همه‌جا</p>
-    <div class="mt-5 flex gap-2 bg-white rounded-2xl shadow-lg p-1.5">
+    <!-- تیتر بزرگ -->
+    <h1 class="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">شهرت را زندگی کن، دوباره کشف کن</h1>
+    
+    <!-- زیرنویس اول -->
+    <p class="text-emerald-50 text-sm md:text-base font-medium mt-3">راهنمای هوشمند کسب‌وکارهای شهر، مقاصد خوب با یک کلیک</p>
+    
+    <!-- زیرنویس دوم (کوچکتر) -->
+    <p class="text-emerald-100 text-xs md:text-sm mt-1.5 opacity-90">کافه، رستوران، آرایشگاه و هر چی که لازم داری</p>
+
+    <!-- کادر جستجو -->
+    <div class="mt-6 flex gap-2 bg-white rounded-2xl shadow-lg p-1.5">
       <input id="q" oninput="render()" placeholder="دنبال چی می‌گردی؟" 
         class="flex-1 px-3 py-2.5 text-neutral-900 outline-none rounded-xl text-sm">
       <select id="city" onchange="render()" class="border-r px-2 text-sm text-neutral-600 bg-white rounded-xl outline-none">
@@ -69,13 +79,13 @@
   </div>
 </footer>
 
-<!-- نوار پایین -->
-<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40">
-  <div class="max-w-5xl mx-auto grid grid-cols-4 text-xs text-neutral-500">
-    <button class="py-2 flex flex-col items-center gap-1 text-emerald-600"><span class="text-lg">🏠</span>خانه</button>
-    <button onclick="document.getElementById('q').focus()" class="py-2 flex flex-col items-center gap-1"><span class="text-lg">🔍</span>جستجو</button>
-    <button onclick="openClaim()" class="py-2 flex flex-col items-center gap-1"><span class="text-lg">🏪</span>کسب‌وکار من</button>
-    <button onclick="openLogin()" class="py-2 flex flex-col items-center gap-1"><span class="text-lg">👤</span>حساب</button>
+<!-- نوار پایین (فیکس شده با safe-nav) -->
+<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40 safe-nav">
+  <div class="max-w-5xl mx-auto grid grid-cols-4 text-[11px] font-medium text-neutral-500">
+    <button class="py-3 flex flex-col items-center gap-1 text-emerald-600 active:bg-neutral-50"><span class="text-xl">🏠</span>خانه</button>
+    <button onclick="document.getElementById('q').focus()" class="py-3 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🔍</span>جستجو</button>
+    <button onclick="openClaim()" class="py-3 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🏪</span>کسب‌وکار من</button>
+    <button onclick="openLogin()" class="py-3 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">👤</span>حساب</button>
   </div>
 </nav>
 
@@ -135,7 +145,6 @@ const CATS = [
 ];
 
 const BIZ = [
-  // --- غذا و نوشیدنی (۱۰ مورد) ---
   {id:1, name:'کافه ونیز', cat:'food', sub:'کافه', area:'معالی‌آباد', rating:4.7, reviews:82, desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=250&fit=crop', plan:'premium'},
   {id:2, name:'رستوران هفت‌خوان', cat:'food', sub:'رستوران', area:'قصردشت', rating:4.5, reviews:210, desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop', plan:'pro'},
   {id:3, name:'فست‌فود برگرلند', cat:'food', sub:'فست‌فود', area:'زندیه', rating:4.3, reviews:156, desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop', plan:'free'},
@@ -146,68 +155,46 @@ const BIZ = [
   {id:12, name:'رستوران شاطر', cat:'food', sub:'رستوران', area:'معالی‌آباد', rating:4.2, reviews:130, desc:'انواع غذاهای ایرانی', img:'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=250&fit=crop', plan:'free'},
   {id:13, name:'پیتزا سیب', cat:'food', sub:'فست‌فود', area:'قدوسی غربی', rating:4.6, reviews:400, desc:'پیتزاهای خوشمزه با پنیر پیتزا', img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=250&fit=crop', plan:'premium'},
   {id:14, name:'آبمیوه بستنی هدیش', cat:'food', sub:'آبمیوه', area:'زندیه', rating:4.8, reviews:210, desc:'آبمیوه طبیعی و بستنی سنتی', img:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- زیبایی و آرایش (۴ مورد) ---
   {id:5, name:'آرایشگاه رویال', cat:'beauty', sub:'آرایشگاه مردانه', area:'بلوار رحمت', rating:4.6, reviews:95, desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=250&fit=crop', plan:'free'},
   {id:6, name:'سالن زیبایی نیلا', cat:'beauty', sub:'سالن زیبایی', area:'ستارخان', rating:4.9, reviews:178, desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop', plan:'premium'},
   {id:15, name:'آرایشگاه ژاویه', cat:'beauty', sub:'آرایشگاه مردانه', area:'قصردشت', rating:4.5, reviews:64, desc:'اصلاح و ماساژ صورت', img:'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=250&fit=crop', plan:'free'},
   {id:16, name:'کلینیک زیبایی درسا', cat:'beauty', sub:'کلینیک پوست', area:'معالی‌آباد', rating:4.8, reviews:200, desc:'خدمات تخصصی پوست و مو', img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=250&fit=crop', plan:'pro'},
-
-  // --- خرید و مارکت (۴ مورد) ---
   {id:7, name:'سوپرمارکت رفاه', cat:'shopping', sub:'مارکت', area:'فرهنگ‌شهر', rating:4.2, reviews:64, desc:'خرید روزانه با قیمت مناسب', img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=250&fit=crop', plan:'free'},
   {id:8, name:'میوه‌فروشی باغ', cat:'shopping', sub:'میوه تازه', area:'قدوسی', rating:4.4, reviews:41, desc:'میوه تازه و ارسال رایگان', img:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=250&fit=crop', plan:'free'},
   {id:17, name:'هایپراستار شیراز', cat:'shopping', sub:'هایپر', area:'بلوار چمران', rating:4.7, reviews:800, desc:'خرید عمده و خرده', img:'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&h=250&fit=crop', plan:'pro'},
   {id:18, name:'پروتئین‌شاپ قهرمان', cat:'shopping', sub:'مکمل ورزشی', area:'زندیه', rating:4.9, reviews:110, desc:'انواع مکمل‌های بدنسازی اصل', img:'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&h=250&fit=crop', plan:'premium'},
-
-  // --- سلامت و درمان (۴ مورد) ---
   {id:19, name:'دکتر محمدی (دندانپزشک)', cat:'health', sub:'دندانپزشکی', area:'معالی‌آباد', rating:4.8, reviews:150, desc:'دندانپزشکی زیبایی و ایمپلنت', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=250&fit=crop', plan:'premium'},
   {id:20, name:'داروخانه شبانه‌روزی', cat:'health', sub:'داروخانه', area:'قصردشت', rating:4.5, reviews:80, desc:'ارائه کلیه داروها در تمام ساعات', img:'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?w=400&h=250&fit=crop', plan:'free'},
   {id:21, name:'کلینیک دامپزشکی پت', cat:'health', sub:'دامپزشکی', area:'بلوار رحمت', rating:4.7, reviews:60, desc:'درمان و واکسیناسیون حیوانات', img:'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&h=250&fit=crop', plan:'pro'},
   {id:22, name:'مرکز ماساژ آرامش', cat:'health', sub:'ماساژ', area:'فرهنگ‌شهر', rating:4.6, reviews:95, desc:'ماساژ درمانی و ریلکسی', img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- تعمیرات و خدمات خانه (۴ مورد) ---
   {id:23, name:'لوله‌کشی برقکاری حرفه‌ای', cat:'repair', sub:'تاسیسات', area:'کل شیراز', rating:4.9, reviews:120, desc:'خدمات ۲۴ ساعته لوله‌کشی و برق', img:'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=250&fit=crop', plan:'pro'},
   {id:24, name:'تعمیرات موبایل هوشمند', cat:'repair', sub:'موبایل', area:'چهارراه مشیر', rating:4.4, reviews:200, desc:'تعویض ال‌سی‌دی و باتری', img:'https://images.unsplash.com/photo-1598327105666-5b89351cb31b?w=400&h=250&fit=crop', plan:'free'},
   {id:25, name:'نجاری و کابینت سازی', cat:'repair', sub:'نجاری', area:'قصردشت', rating:4.7, reviews:45, desc:'ساخت کابینت و ام‌دی‌اف', img:'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400&h=250&fit=crop', plan:'free'},
   {id:26, name:'تعمیرگاه لوازم خانگی', cat:'repair', sub:'لوازم خانگی', area:'زندیه', rating:4.3, reviews:55, desc:'تعمیر لباسشویی و یخچال', img:'https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- خودرو (۴ مورد) ---
   {id:27, name:'اتوسرویس پارس', cat:'auto', sub:'مکانیکی', area:'بلوار امیرکبیر', rating:4.6, reviews:80, desc:'تعمیرات تخصصی خودروهای ایرانی', img:'https://images.unsplash.com/photo-1613214149922-f1809c99c9a1?w=400&h=250&fit=crop', plan:'pro'},
   {id:28, name:'کارواش نانو', cat:'auto', sub:'کارواش', area:'معالی‌آباد', rating:4.8, reviews:150, desc:'شستشوی نانو و دیتیلینگ', img:'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?w=400&h=250&fit=crop', plan:'premium'},
   {id:29, name:'آپاراتی و لاستیک فروشی', cat:'auto', sub:'لاستیک', area:'زندیه', rating:4.2, reviews:60, desc:'فروش و نصب انواع لاستیک', img:'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=400&h=250&fit=crop', plan:'free'},
   {id:30, name:'دینام و استارت', cat:'auto', sub:'برق خودرو', area:'قصردشت', rating:4.5, reviews:40, desc:'تعمیر دینام و استارت', img:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- ورزش (۴ مورد) ---
   {id:31, name:'باشگاه بدنسازی آهن', cat:'fitness', sub:'بدنسازی', area:'معالی‌آباد', rating:4.7, reviews:130, desc:'مجهز به بهترین دستگاه‌ها', img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=250&fit=crop', plan:'pro'},
   {id:32, name:'استخر پوریا', cat:'fitness', sub:'استخر', area:'قصردشت', rating:4.4, reviews:80, desc:'استخر سرپوشیده با مربی', img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=250&fit=crop', plan:'free'},
   {id:33, name:'باشگاه رزمی', cat:'fitness', sub:'رزمی', area:'فرهنگ‌شهر', rating:4.9, reviews:50, desc:'آموزش کاراته و MMA', img:'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400&h=250&fit=crop', plan:'pro'},
   {id:34, name:'پارک ورزشی شهر', cat:'fitness', sub:'پارک', area:'بلوار چمران', rating:4.6, reviews:200, desc:'فضای باز برای ورزش صبحگاهی', img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- آموزش (۴ مورد) ---
   {id:35, name:'آموزشگاه زبان آکسفورد', cat:'education', sub:'زبان انگلیسی', area:'معالی‌آباد', rating:4.8, reviews:300, desc:'تدریس تخصصی IELTS', img:'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=400&h=250&fit=crop', plan:'premium'},
   {id:36, name:'آموزشگاه کنکور', cat:'education', sub:'کنکور', area:'زندیه', rating:4.5, reviews:150, desc:'کلاس‌های ریاضی و فیزیک', img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=250&fit=crop', plan:'pro'},
   {id:37, name:'کلاس موسیقی', cat:'education', sub:'موسیقی', area:'قصردشت', rating:4.7, reviews:80, desc:'آموزش گیتار و پیانو', img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=250&fit=crop', plan:'free'},
   {id:38, name:'کلاس نقاشی', cat:'education', sub:'هنر', area:'حافظیه', rating:4.9, reviews:60, desc:'آموزش سیاه‌قلم و رنگ روغن', img:'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- پوشاک و مد (۴ مورد) ---
   {id:39, name:'بوتیک پوشاک', cat:'fashion', sub:'لباس زنانه', area:'بلوار رحمت', rating:4.6, reviews:120, desc:'لباس‌های مجلسی و اسپرت', img:'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=250&fit=crop', plan:'pro'},
   {id:40, name:'کفش فروشی', cat:'fashion', sub:'کفش', area:'زندیه', rating:4.3, reviews:90, desc:'انواع کفش چرم و اسپرت', img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=250&fit=crop', plan:'free'},
   {id:41, name:'مانتو فروشی', cat:'fashion', sub:'مانتو', area:'معالی‌آباد', rating:4.8, reviews:200, desc:'مانتوهای جدید و شیک', img:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=250&fit=crop', plan:'free'},
   {id:42, name:'بوتیک مردانه', cat:'fashion', sub:'لباس مردانه', area:'قصردشت', rating:4.5, reviews:50, desc:'کت و شلوار و لباس اسپرت', img:'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- حیوانات خانگی (۴ مورد) ---
   {id:43, name:'پت شاپ پری', cat:'pets', sub:'پت شاپ', area:'معالی‌آباد', rating:4.7, reviews:110, desc:'غذا و لوازم حیوانات', img:'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=250&fit=crop', plan:'free'},
   {id:44, name:'پانسیون حیوانات', cat:'pets', sub:'پانسیون', area:'بلوار چمران', rating:4.8, reviews:60, desc:'نگهداری سگ و گربه', img:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=250&fit=crop', plan:'pro'},
   {id:45, name:'فروشگاه ماهی', cat:'pets', sub:'ماهی', area:'زندیه', rating:4.4, reviews:40, desc:'ماهی زینتی و آکواریوم', img:'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&h=250&fit=crop', plan:'free'},
   {id:46, name:'پرنده فروشی', cat:'pets', sub:'پرنده', area:'قصردشت', rating:4.5, reviews:70, desc:'قناری و طوطی', img:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- سفر و اقامت (۴ مورد) ---
   {id:47, name:'آژانس مسافرتی', cat:'travel', sub:'آژانس', area:'معالی‌آباد', rating:4.6, reviews:150, desc:'تورهای داخلی و خارجی', img:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=250&fit=crop', plan:'pro'},
   {id:48, name:'هتل بزرگ شیراز', cat:'travel', sub:'هتل', area:'چمران', rating:4.9, reviews:900, desc:'اقامت لوکس و رستوران', img:'https://images.unsplash.com/photo-1542314831-c6a4d1424b09?w=400&h=250&fit=crop', plan:'premium'},
   {id:49, name:'اقامتگاه بومگردی', cat:'travel', sub:'بومگردی', area:'حافظیه', rating:4.8, reviews:200, desc:'تجربه زندگی سنتی', img:'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400&h=250&fit=crop', plan:'free'},
   {id:50, name:'اجاره ماشین', cat:'travel', sub:'اجاره خودرو', area:'فرودگاه', rating:4.4, reviews:80, desc:'اجاره خودروهای صفر', img:'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=250&fit=crop', plan:'free'},
-
-  // --- کشاورزی و عمده (۴ مورد) ---
   {id:51, name:'میوه و تره بار عمده', cat:'agri', sub:'عمده فروشی', area:'میدان مرکزی', rating:4.5, reviews:60, desc:'تامین میوه رستوران‌ها', img:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=250&fit=crop', plan:'pro'},
   {id:52, name:'گلخانه گیاهان آپارتمانی', cat:'agri', sub:'گل و گیاه', area:'بلوار رحمت', rating:4.7, reviews:110, desc:'فروش انواع گیاهان', img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=250&fit=crop', plan:'free'},
   {id:53, name:'تامین مرغ و گوشت', cat:'agri', sub:'پروتئین', area:'زندیه', rating:4.3, reviews:80, desc:'تامین عمده رستوران‌ها', img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=250&fit=crop', plan:'free'},
@@ -269,11 +256,9 @@ function openBiz(id){
   const b = BIZ.find(x=>x.id===id);
   const cat = CATS.find(c=>c.id===b.cat);
   
-  // ساخت لینک مسیریابی گوگل مپ
   const mapQuery = encodeURIComponent(`${b.name} ${b.area} شیراز`);
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   
-  // ساخت لینک جستجوی اینستاگرام در گوگل
   const instaQuery = encodeURIComponent(`اینستاگرام ${b.name} ${b.area} شیراز`);
   const instaUrl = `https://www.google.com/search?q=${instaQuery}`;
 
@@ -312,7 +297,6 @@ function submitClaim(){
   const p = document.getElementById('bizPhone').value.trim();
   if(!n || !p) return alert('لطفا نام کسب‌وکار و شماره تماس را وارد کنید.');
   
-  // ارسال اطلاعات به واتساپ (شماره خودت رو جایگزین کن)
   const text = `سلام، من صاحب کسب‌وکار "${n}" هستم. شماره تماس من: ${p}. لطفا اطلاعات کسب‌وکار من را در اپلیکیشن بازارا ثبت کنید.`;
   window.open(`https://wa.me/989170000000?text=${encodeURIComponent(text)}`, '_blank');
   
