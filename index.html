@@ -1,894 +1,462 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#17152d">
-<title>VIVORA | کشف دنیای کسب‌وکارها</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#059669">
+<title>بازارا — شهرت را زندگی کن</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- اضافه کردن نقشه Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root{
-  --bg:#f7f7fb;
-  --surface:#ffffff;
-  --ink:#19172e;
-  --muted:#88869c;
-  --purple:#7255ef;
-  --purple2:#927aff;
-  --pink:#ff6eaa;
-  --orange:#ffab64;
-  --line:#eeeef4;
-  --shadow:0 12px 35px rgba(35,24,80,.07);
-  --radius:22px;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family:"Vazirmatn",sans-serif;
-}
-button,input,select{font-family:inherit}
-button{cursor:pointer}
-a{text-decoration:none;color:inherit}
-.topbar{
-  height:76px;background:#fff;
-  display:flex;align-items:center;
-  justify-content:space-between;
-  padding:0 max(calc((100% - 1240px)/2),20px);
-  border-bottom:1px solid var(--line);
-  position:sticky;top:0;z-index:1000;
-}
-.logo{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:900;letter-spacing:-1px}
-.logo-icon{
-  width:42px;height:42px;border-radius:14px;
-  background:linear-gradient(135deg,#7554f4,#ff6ea8);
-  display:grid;place-items:center;color:white;font-size:22px;
-}
-.logo span{color:var(--purple)}
-.top-actions{display:flex;align-items:center;gap:12px}
-.icon-btn{
-  border:1px solid var(--line);background:white;
-  width:42px;height:42px;border-radius:14px;font-size:18px;
-}
-.container{max-width:1240px;margin:auto;padding:26px 20px 100px}
-.hero{
-  border-radius:30px;padding:38px;
-  min-height:270px;color:white;position:relative;overflow:hidden;
-  background:linear-gradient(115deg,#221a4a,#6247d9 60%,#a45ae5);
-  box-shadow:0 20px 50px #6247d928;
-}
-.hero:before,.hero:after{
-  content:"";position:absolute;border-radius:50%;
-  background:#ffffff12;
-}
-.hero:before{width:320px;height:320px;left:-60px;top:-140px}
-.hero:after{width:190px;height:190px;left:270px;bottom:-120px}
-.hero-content{position:relative;z-index:2;max-width:650px}
-.hero-tag{
-  display:inline-block;background:#ffffff20;
-  padding:6px 13px;border-radius:20px;font-size:12px;
-}
-.hero h1{font-size:clamp(27px,4vw,43px);line-height:1.5;margin:15px 0 8px;font-weight:900}
-.hero p{color:#eee9ff;margin:0 0 22px}
-.searchbox{
-  display:flex;align-items:center;gap:10px;
-  background:white;border-radius:17px;padding:7px;
-  max-width:610px;box-shadow:0 8px 25px #20154a22;
-}
-.searchbox input{
-  flex:1;min-width:0;border:0;outline:0;
-  padding:12px;color:var(--ink);font-size:14px;
-}
-.searchbox button{
-  background:var(--purple);color:white;border:0;
-  padding:12px 22px;border-radius:12px;font-weight:700;
-}
-.section{margin-top:34px}
-.section-head{
-  display:flex;justify-content:space-between;
-  align-items:center;margin-bottom:17px;gap:12px;
-}
-.section-head h2{font-size:21px;margin:0;font-weight:900}
-.section-head p{color:var(--muted);font-size:12px;margin:4px 0 0}
-.cities{display:flex;gap:10px;overflow-x:auto;padding:2px 0 8px}
-.city{
-  background:white;border:1px solid var(--line);
-  padding:12px 22px;border-radius:15px;
-  white-space:nowrap;font-weight:700;color:#65627c;
-}
-.city.active{background:var(--purple);color:white;border-color:var(--purple)}
-.categories{
- display:grid;grid-template-columns:repeat(6,1fr);gap:12px
-}
-.category{
- background:white;border:1px solid var(--line);
- border-radius:18px;padding:17px 8px;text-align:center;
- transition:.2s;cursor:pointer;
-}
-.category:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
-.category .emoji{font-size:27px;display:block;margin-bottom:7px}
-.category strong{font-size:12px}
-.category.active{border:2px solid var(--purple);background:#f1eeff}
-.featured{
- display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
-}
-.feature-card{
- min-height:180px;border-radius:22px;padding:22px;color:white;
- display:flex;flex-direction:column;justify-content:flex-end;
- position:relative;overflow:hidden;
- background:linear-gradient(130deg,#3d276e,#aa62b5);
-}
-.feature-card:nth-child(2){background:linear-gradient(130deg,#ef805d,#e9b45b)}
-.feature-card:nth-child(3){background:linear-gradient(130deg,#276b77,#4b9a8e)}
-.feature-card small{opacity:.8}
-.feature-card h3{font-size:20px;margin:5px 0}
-.filters{display:flex;gap:10px;flex-wrap:wrap}
-.filter-input,.filter-select{
- background:white;border:1px solid var(--line);
- border-radius:13px;padding:11px 13px;outline:0;
- color:var(--ink);min-width:140px;
-}
-.filter-input{flex:1;min-width:200px}
-.results-layout{
- display:grid;grid-template-columns:1.15fr .85fr;
- gap:18px;align-items:start;
-}
-.business-grid{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;
-}
-.business-card{
- background:white;border:1px solid var(--line);
- border-radius:19px;overflow:hidden;transition:.2s;
-}
-.business-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.business-image{
- width:100%;height:145px;object-fit:cover;
- background:#eee;
-}
-.card-content{padding:13px}
-.card-title-row{display:flex;justify-content:space-between;gap:5px}
-.card-title{font-weight:800;font-size:14px}
-.heart{border:0;background:none;font-size:20px;color:#aaa}
-.heart.saved{color:#f05c91}
-.meta{color:var(--muted);font-size:11px;margin-top:6px}
-.status{
- display:inline-block;background:#e9f9ef;color:#238c50;
- border-radius:20px;padding:3px 8px;font-size:10px;
- margin-top:8px;
-}
-.status.unknown{background:#fff4e6;color:#a46716}
-.card-actions{display:flex;gap:7px;margin-top:13px}
-.card-actions a,.card-actions button{
- flex:1;text-align:center;padding:9px 5px;
- border-radius:10px;border:0;font-size:11px;font-weight:700;
-}
-.route{background:#eeeaff;color:#6043d8}
-.social{background:#fff0f5;color:#d34d83}
-.details{background:#f1f1f6;color:#555}
-#map{
- height:540px;border-radius:20px;
- border:1px solid var(--line);z-index:1;
-}
-.map-panel{position:sticky;top:95px}
-.map-caption{font-size:12px;color:var(--muted);margin:9px 3px}
-.empty{
- grid-column:1/-1;text-align:center;padding:55px 15px;
- background:white;border-radius:20px;color:var(--muted);
-}
-.loader{
- text-align:center;padding:30px;color:var(--purple);
-}
-.bottom-nav{
- display:none;position:fixed;bottom:0;left:0;right:0;
- background:#fff;border-top:1px solid var(--line);
- padding:10px 5px calc(10px + env(safe-area-inset-bottom));
- z-index:1001;justify-content:space-around;
-}
-.nav-item{border:0;background:none;color:#888;text-align:center;font-size:10px}
-.nav-item b{display:block;font-size:21px;margin-bottom:2px}
-.nav-item.active{color:var(--purple)}
-.modal{
- display:none;position:fixed;inset:0;background:#16122d99;
- z-index:2000;align-items:center;justify-content:center;padding:15px;
-}
-.modal.open{display:flex}
-.modal-box{
- width:min(560px,100%);max-height:90vh;overflow:auto;
- background:white;border-radius:25px;padding:24px;
-}
-.close{float:left;border:0;background:#f2f1f7;border-radius:10px;padding:7px 12px}
-.toast{
- position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
- background:#211b42;color:white;padding:12px 20px;
- border-radius:12px;z-index:3000;font-size:12px;
- opacity:0;pointer-events:none;transition:.25s;
-}
-.toast.show{opacity:1}
-.footer{text-align:center;padding:35px 10px;color:var(--muted);font-size:12px}
-@media(max-width:850px){
- .categories{grid-template-columns:repeat(3,1fr)}
- .results-layout{grid-template-columns:1fr}
- .map-panel{position:static}
- #map{height:330px}
- .featured{grid-template-columns:1fr}
-}
-@media(max-width:560px){
- .topbar{height:64px;padding:0 14px}
- .logo{font-size:20px}
- .container{padding:16px 13px 95px}
- .hero{padding:24px 18px;min-height:280px;border-radius:23px}
- .hero h1{font-size:27px}
- .searchbox button{padding:11px 13px}
- .categories{grid-template-columns:repeat(3,1fr);gap:8px}
- .category{padding:13px 5px}
- .business-grid{grid-template-columns:1fr 1fr;gap:9px}
- .business-image{height:115px}
- .card-content{padding:10px}
- .card-title{font-size:12px}
- .card-actions{flex-wrap:wrap}
- .card-actions a,.card-actions button{font-size:10px}
- .bottom-nav{display:flex}
- .top-actions .desktop-only{display:none}
-}
+  body { font-family: Vazirmatn, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  .line2{-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  #map { height: 50vh; width: 100%; border-radius: 1rem; z-index: 1; }
+  .safe-header { padding-top: max(0.5rem, env(safe-area-inset-top)); }
+  .safe-nav { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+  /* استایل اسکرول افقی برای فید */
+  .feed-container { height: calc(100vh - 140px); overflow-y: auto; scroll-snap-type: y mandatory; }
+  .feed-item { height: 100%; scroll-snap-align: start; position: relative; margin-bottom: 1rem; }
 </style>
 </head>
+<body class="text-neutral-800">
 
-<body>
-
-<header class="topbar">
- <div class="logo"><div class="logo-icon">✦</div>VIVO<span>RA</span></div>
- <div class="top-actions">
-  <button class="icon-btn desktop-only" onclick="showToast('به‌زودی: اعلان‌ها')">♧</button>
-  <button class="icon-btn" onclick="showFavorites()">♡</button>
- </div>
+<!-- هدر -->
+<header class="sticky top-0 z-40 bg-white border-b border-neutral-200 safe-header shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white grid place-items-center font-bold">ب</div>
+      <span class="font-bold text-lg">بازارا</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <select id="citySelect" onchange="renderHome()" class="text-xs border rounded-lg p-1 outline-none">
+        <option value="tehran">تهران</option>
+        <option value="shiraz">شیراز</option>
+      </select>
+    </div>
+  </div>
 </header>
 
-<main class="container">
+<!-- محتوای اصلی (تب‌ها) -->
+<main class="max-w-5xl mx-auto pb-24">
 
-<section class="hero">
- <div class="hero-content">
-  <span class="hero-tag">✦ دنیای جدید کشف کسب‌وکارها</span>
-  <h1>دنیای جذاب اطرافت رو کشف کن!</h1>
-  <p>بهترین مکان‌ها، برندها، خدمات و پیشنهادهای ویژه در نزدیکی تو.</p>
-  <div class="searchbox">
-   <span>⌕</span>
-   <input id="heroSearch" placeholder="چی دوست داری پیدا کنی؟">
-   <button onclick="searchFromHero()">جستجو</button>
+  <!-- تب خانه -->
+  <div id="tab-home" class="tab-content active px-4 pt-4">
+    <h1 class="text-xl font-bold mb-2">شهرت را زندگی کن، دوباره کشف کن</h1>
+    <p class="text-xs text-neutral-500 mb-4">راهنمای هوشمند کسب‌وکارهای شهر</p>
+    
+    <div class="relative mb-6">
+      <input id="searchInput" oninput="renderHome()" placeholder="دنبال چی می‌گردی؟ (مثلاً کافه، رستوران...)" class="w-full bg-white border border-neutral-200 rounded-xl py-3 px-10 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500">
+      <span class="absolute left-3 top-3 text-neutral-400">🔍</span>
+    </div>
+
+    <div id="cats-grid" class="grid grid-cols-4 gap-2 mb-6"></div>
+
+    <div class="flex items-center justify-between mb-3">
+      <h2 id="home-title" class="font-bold text-base">همه کسب‌وکارها</h2>
+      <button onclick="openCompareModal()" id="compare-btn" class="hidden text-xs bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg font-bold">مقایسه (0)</button>
+    </div>
+    <div id="biz-list" class="grid gap-3"></div>
   </div>
- </div>
-</section>
 
-<section class="section">
- <div class="section-head">
-  <div><h2>کدوم شهر هستی؟</h2><p>شهر مورد نظرت رو انتخاب کن</p></div>
- </div>
- <div class="cities" id="cities"></div>
-</section>
-
-<section class="section">
- <div class="section-head"><div><h2>دسته‌بندی‌ها</h2><p>دنیای مورد علاقه‌ات رو انتخاب کن</p></div></div>
- <div class="categories" id="categories"></div>
-</section>
-
-<section class="section">
- <div class="section-head">
-  <div><h2>پیشنهادهای ویژه VIVORA</h2><p>کشف تجربه‌های متفاوت</p></div>
- </div>
- <div class="featured">
-  <div class="feature-card"><small>DISCOVER MORE</small><h3>جاهای جدید رو کشف کن</h3><span>هر روز یک تجربه تازه ✨</span></div>
-  <div class="feature-card"><small>SMART DEALS</small><h3>فرصت‌های جذاب خرید</h3><span>پیشنهادهای ویژه برای تو 🎁</span></div>
-  <div class="feature-card"><small>LOCAL EXPERIENCE</small><h3>بهترین‌های شهر</h3><span>از نزدیک تجربه کن 📍</span></div>
- </div>
-</section>
-
-<section class="section">
- <div class="section-head">
-  <div><h2>کسب‌وکارهای شهر</h2><p id="resultCaption">در حال آماده‌سازی اطلاعات...</p></div>
-  <button class="icon-btn" onclick="loadBusinesses()">↻</button>
- </div>
-
- <div class="filters">
-  <input class="filter-input" id="searchInput" placeholder="جستجوی نام یا نوع کسب‌وکار..." oninput="renderBusinesses()">
-  <select class="filter-select" id="sortSelect" onchange="renderBusinesses()">
-   <option value="default">مرتب‌سازی پیش‌فرض</option>
-   <option value="name">نام کسب‌وکار</option>
-  </select>
- </div>
-
- <div class="results-layout" style="margin-top:17px">
-  <div class="business-grid" id="businessGrid">
-   <div class="empty">برای مشاهده کسب‌وکارها یک شهر انتخاب کن.</div>
+  <!-- تب نقشه -->
+  <div id="tab-map" class="tab-content px-4 pt-4">
+    <h2 class="font-bold text-base mb-3">نقشه هوشمند (اطراف شما)</h2>
+    <div id="map"></div>
+    <p class="text-xs text-neutral-500 mt-3 text-center">برای مشاهده جزئیات، روی نشانگرها کلیک کنید.</p>
   </div>
-  <div class="map-panel">
-   <div id="map"></div>
-   <p class="map-caption">نقشه بر اساس داده‌های OpenStreetMap نمایش داده می‌شود. مکان‌ها ممکن است نیازمند تأیید باشند.</p>
+
+  <!-- تب دستیار هوشمند -->
+  <div id="tab-ai" class="tab-content px-4 pt-4 flex flex-col h-[calc(100vh-140px)]">
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl">🤖</div>
+      <div>
+        <h2 class="font-bold text-base">دستیار هوشمند بازارا</h2>
+        <p class="text-xs text-neutral-500">نیازت رو بگو تا بهترین رو پیدا کنم</p>
+      </div>
+    </div>
+    <div id="chat-box" class="flex-1 bg-white rounded-2xl border border-neutral-200 p-4 overflow-y-auto flex flex-col gap-3">
+      <div class="bg-emerald-50 text-emerald-800 p-3 rounded-2xl rounded-tr-none text-sm self-start max-w-[85%]">
+        سلام! من دستیار هوشمند بازارا هستم. دنبال چه نوع کسب‌وکاری هستی؟ (مثلاً: یه کافه دنج برای درس خوندن، یا بهترین تعمیرکار خودرو)
+      </div>
+    </div>
+    <div class="mt-3 flex gap-2">
+      <input id="aiInput" placeholder="نیاز خود را بنویسید..." class="flex-1 border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+      <button onclick="askAI()" class="bg-emerald-600 text-white px-5 rounded-xl font-bold">ارسال</button>
+    </div>
   </div>
- </div>
-</section>
 
-<section class="section">
- <div class="section-head">
-  <div><h2>پیشنهاد هوشمند</h2><p>دستیار جستجوی ساده VIVORA</p></div>
- </div>
- <div style="background:white;padding:20px;border-radius:20px">
-  <p style="margin-top:0;font-weight:800">دنبال چه تجربه‌ای هستی؟</p>
-  <input class="filter-input" id="aiInput" placeholder="مثلاً یک کافه دنج در شیراز..." style="width:100%">
-  <button onclick="smartSearch()" style="margin-top:12px;background:var(--purple);color:white;border:0;border-radius:12px;padding:12px 22px">پیدا کن ✨</button>
- </div>
-</section>
+  <!-- تب فید (اینستاگرام) -->
+  <div id="tab-feed" class="tab-content pt-2">
+    <div class="feed-container px-4">
+      <!-- آیتم‌های فید با جاوااسکریپت پر می‌شوند -->
+      <div id="feed-list"></div>
+    </div>
+  </div>
 
-<section class="section">
- <div class="section-head"><div><h2>پاسپورت کشف شهر</h2><p>با کشف مکان‌های جدید امتیاز بگیر</p></div></div>
- <div style="background:linear-gradient(120deg,#211943,#7255ef);padding:23px;border-radius:22px;color:white">
-  <div style="font-size:13px;opacity:.8">امتیازهای تو</div>
-  <div style="font-size:38px;font-weight:900" id="points">0 ✦</div>
-  <p style="font-size:12px">مکان‌های مورد علاقه‌ات رو ذخیره کن و سفر کشف خودت رو بساز.</p>
-  <button onclick="showFavorites()" style="background:white;color:#6346d9;border:0;border-radius:12px;padding:10px 17px;font-weight:800">مشاهده علاقه‌مندی‌ها</button>
- </div>
-</section>
+  <!-- تب پروفایل -->
+  <div id="tab-profile" class="tab-content px-4 pt-4">
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-neutral-100 text-center mb-4">
+      <div class="w-20 h-20 bg-emerald-600 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">👤</div>
+      <h2 class="font-bold text-lg">کاربر بازارا</h2>
+      <p class="text-xs text-neutral-500">۰۹۱۲ *** ****</p>
+      <div class="mt-4 bg-emerald-50 rounded-xl p-3 flex justify-between items-center">
+        <div class="text-right">
+          <p class="text-xs text-neutral-500">کیف پول امتیاز</p>
+          <p class="font-bold text-emerald-700 text-lg"><span id="wallet-score">۰</span> امتیاز</p>
+        </div>
+        <div class="text-3xl">💎</div>
+      </div>
+    </div>
 
-<div class="footer">
- VIVORA © 2026 · Discover your world<br>
- ساخته شده برای کشف کسب‌وکارهای بهتر
-</div>
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden mb-4">
+      <div class="p-4 border-b border-neutral-100 font-bold text-sm flex justify-between items-center">
+        <span>ذخیره‌شده‌ها (علاقه‌مندی‌ها)</span>
+        <span class="text-xs bg-neutral-100 px-2 py-0.5 rounded-full text-neutral-500" id="saved-count">۰</span>
+      </div>
+      <div id="saved-list" class="p-4 text-center text-neutral-400 text-xs">
+        هنوز چیزی ذخیره نکرده‌اید.
+      </div>
+    </div>
+  </div>
+
 </main>
 
-<nav class="bottom-nav">
- <button class="nav-item active" onclick="scrollTo({top:0,behavior:'smooth'})"><b>⌂</b>خانه</button>
- <button class="nav-item" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})"><b>◈</b>کشف</button>
- <button class="nav-item" onclick="document.getElementById('map').scrollIntoView({behavior:'smooth'})"><b>⌖</b>نقشه</button>
- <button class="nav-item" onclick="showFavorites()"><b>♡</b>علاقه‌مندی</button>
+<!-- منوی پایین (5 تب) -->
+<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40 safe-nav shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+  <div class="max-w-5xl mx-auto grid grid-cols-5 text-[10px] font-medium text-neutral-500">
+    <button onclick="switchTab('home', this)" class="nav-btn py-2 flex flex-col items-center gap-1 text-emerald-600 active:bg-neutral-50"><span class="text-xl">🏠</span>خانه</button>
+    <button onclick="switchTab('map', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🗺️</span>نقشه</button>
+    <button onclick="switchTab('ai', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🤖</span>دستیار</button>
+    <button onclick="switchTab('feed', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🎬</span>کشف</button>
+    <button onclick="switchTab('profile', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">👤</span>پروفایل</button>
+  </div>
 </nav>
 
-<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
- <div class="modal-box" id="modalContent"></div>
+<!-- مودال جزئیات / پروفایل زنده -->
+<div id="detailModal" class="fixed inset-0 bg-black/60 z-50 hidden items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this)closeDetail()">
+  <div class="bg-white w-full max-w-lg rounded-t-3xl md:rounded-3xl max-h-[90vh] overflow-y-auto" id="detailBody"></div>
 </div>
-<div class="toast" id="toast"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- مودال مقایسه -->
+<div id="compareModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)closeCompareModal()">
+  <div class="bg-white w-full max-w-3xl rounded-3xl p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="font-bold text-lg">مقایسه هوشمند</h2>
+      <button onclick="closeCompareModal()" class="text-2xl">&times;</button>
+    </div>
+    <div id="compareBody" class="overflow-x-auto"></div>
+  </div>
+</div>
 
 <script>
-"use strict";
-
-/* ---------------- CONFIGURATION ---------------- */
-
-const CONFIG = {
- maxResults:50,
- searchRadius:8500,
- overpass:[
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.kumi.systems/api/interpreter"
- ]
-};
-
-const CITIES = [
- {id:"tehran",name:"تهران",lat:35.6892,lon:51.3890},
- {id:"shiraz",name:"شیراز",lat:29.5918,lon:52.5837},
- {id:"isfahan",name:"اصفهان",lat:32.6546,lon:51.6680},
- {id:"ahvaz",name:"اهواز",lat:31.3183,lon:48.6706},
- {id:"tabriz",name:"تبریز",lat:38.0962,lon:46.2738}
+// دیتابیس تستی ۲۰ کسب‌وکار (۱۰ تهران، ۱۰ شیراز) با مختصات و تگ
+const BIZ = [
+  // تهران
+  {id:1, name:'کافه راز', city:'tehran', cat:'food', area:'زعفرانیه', lat:35.799, lng:51.415, rating:4.8, trust:98, price:'لوکس', tags:['دنج','رمانتیک','مدرن'], desc:'کافه دنج با فضای کار و قهوه تخصصی', img:'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=600&h=400&fit=crop', plan:'premium'},
+  {id:2, name:'رستوران شمشیری', city:'tehran', cat:'food', area:'تجریش', lat:35.805, lng:51.433, rating:4.5, trust:92, price:'متوسط', tags:['سنتی','خانوادگی','کباب'], desc:'غذای سنتی ایرانی در فضای دنج', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop', plan:'pro'},
+  {id:3, name:'پیتزا آتش', city:'tehran', cat:'food', area:'ولنجک', lat:35.808, lng:51.403, rating:4.2, trust:85, price:'اقتصادی', tags:['فست فود','بیرون بر'], desc:'پیتزا با خمیر تازه و پنیر پیتزا', img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=400&fit=crop', plan:'free'},
+  {id:4, name:'دندانپزشکی دکتر احمدی', city:'tehran', cat:'health', area:'سعادت آباد', lat:35.780, lng:51.380, rating:4.9, trust:99, price:'لوکس', tags:['ایمپلنت','VIP'], desc:'دندانپزشکی زیبایی و ایمپلنت با تیم مجرب', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&h=400&fit=crop', plan:'premium'},
+  {id:5, name:'سالن زیبایی پریا', city:'tehran', cat:'beauty', area:'نیاوران', lat:35.815, lng:51.470, rating:4.7, trust:95, price:'متوسط', tags:['میکاپ','پوست'], desc:'خدمات تخصصی زیبایی بانوان', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=400&fit=crop', plan:'pro'},
+  {id:6, name:'اتوسرویس برتر', city:'tehran', cat:'auto', area:'پونک', lat:35.750, lng:51.330, rating:4.4, trust:88, price:'متوسط', tags:['مکانیکی','تعمیر'], desc:'تعمیرات تخصصی خودروهای خارجی', img:'https://images.unsplash.com/photo-1613214149922-f1809c99c9a1?w=600&h=400&fit=crop', plan:'free'},
+  {id:7, name:'آموزشگاه زبان نوین', city:'tehran', cat:'education', area:'ونک', lat:35.760, lng:51.410, rating:4.8, trust:96, price:'اقتصادی', tags:['زبان','آیلتس'], desc:'آموزش زبان انگلیسی با متد روز', img:'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&h=400&fit=crop', plan:'pro'},
+  {id:8, name:'باشگاه بدنسازی آهن', city:'tehran', cat:'fitness', area:'صادقیه', lat:35.720, lng:51.340, rating:4.6, trust:90, price:'اقتصادی', tags:['بدنسازی','فیتنس'], desc:'مجهز به بهترین دستگاه‌های بدنسازی', img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop', plan:'free'},
+  {id:9, name:'بوتیک پوشاک زری', city:'tehran', cat:'fashion', area:'میرداماد', lat:35.770, lng:51.430, rating:4.3, trust:82, price:'لوکس', tags:['لباس زنانه','مجلسی'], desc:'لباس‌های مجلسی و شیک', img:'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=600&h=400&fit=crop', plan:'free'},
+  {id:10, name:'پت شاپ کیوت', city:'tehran', cat:'pets', area:'جردن', lat:35.765, lng:51.420, rating:4.7, trust:93, price:'متوسط', tags:['حیوانات','غذا'], desc:'غذا و لوازم حیوانات خانگی', img:'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&h=400&fit=crop', plan:'free'},
+  
+  // شیراز
+  {id:11, name:'کافه ونیز', city:'shiraz', cat:'food', area:'معالی‌آباد', lat:29.620, lng:52.480, rating:4.7, trust:94, price:'متوسط', tags:['دنج','قهوه','کیک'], desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=400&fit=crop', plan:'premium'},
+  {id:12, name:'رستوران هفت‌خوان', city:'shiraz', cat:'food', area:'قصردشت', lat:29.630, lng:52.510, rating:4.5, trust:91, price:'متوسط', tags:['سنتی','خانوادگی'], desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&h=400&fit=crop', plan:'pro'},
+  {id:13, name:'فست‌فود برگرلند', city:'shiraz', cat:'food', area:'زندیه', lat:29.610, lng:52.530, rating:4.3, trust:86, price:'اقتصادی', tags:['برگر','فست فود'], desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop', plan:'free'},
+  {id:14, name:'سالن زیبایی نیلا', city:'shiraz', cat:'beauty', area:'ستارخان', lat:29.600, lng:52.540, rating:4.9, trust:97, price:'لوکس', tags:['میکاپ','VIP'], desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=400&fit=crop', plan:'premium'},
+  {id:15, name:'آرایشگاه رویال', city:'shiraz', cat:'beauty', area:'بلوار رحمت', lat:29.580, lng:52.520, rating:4.6, trust:89, price:'متوسط', tags:['آقایان','اصلاح'], desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=400&fit=crop', plan:'free'},
+  {id:16, name:'لوله‌کشی حرفه‌ای', city:'shiraz', cat:'repair', area:'کل شیراز', lat:29.615, lng:52.500, rating:4.8, trust:95, price:'متوسط', tags:['۲۴ ساعته','تاسیسات'], desc:'خدمات ۲۴ ساعته لوله‌کشی و برق', img:'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=400&fit=crop', plan:'pro'},
+  {id:17, name:'دکتر محمدی (دندانپزشک)', city:'shiraz', cat:'health', area:'معالی‌آباد', lat:29.625, lng:52.485, rating:4.8, trust:96, price:'لوکس', tags:['دندانپزشکی','ایمپلنت'], desc:'دندانپزشکی زیبایی و ایمپلنت', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&h=400&fit=crop', plan:'premium'},
+  {id:18, name:'باشگاه رزمی', city:'shiraz', cat:'fitness', area:'فرهنگ‌شهر', lat:29.640, lng:52.490, rating:4.9, trust:98, price:'اقتصادی', tags:['کاراته','MMA'], desc:'آموزش کاراته و MMA', img:'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=600&h=400&fit=crop', plan:'pro'},
+  {id:19, name:'هتل بزرگ شیراز', city:'shiraz', cat:'travel', area:'چمران', lat:29.650, lng:52.470, rating:4.9, trust:99, price:'لوکس', tags:['هتل','اقامت'], desc:'اقامت لوکس و رستوران', img:'https://images.unsplash.com/photo-1542314831-c6a4d1424b09?w=600&h=400&fit=crop', plan:'premium'},
+  {id:20, name:'لبنیات سنتی', city:'shiraz', cat:'agri', area:'قصردشت', lat:29.635, lng:52.515, rating:4.9, trust:92, price:'اقتصادی', tags:['ماست','محلی'], desc:'ماست و پنیر محلی', img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&h=400&fit=crop', plan:'free'}
 ];
 
-const CATEGORIES = [
- {id:"all",name:"همه",icon:"✦",tags:[]},
- {id:"restaurant",name:"رستوران",icon:"🍽️",tags:["restaurant","fast_food","food_court"]},
- {id:"cafe",name:"کافه",icon:"☕",tags:["cafe"]},
- {id:"shop",name:"فروشگاه",icon:"🛍️",tags:["shop"]},
- {id:"beauty",name:"زیبایی",icon:"💄",tags:["beauty"]},
- {id:"health",name:"سلامت",icon:"💊",tags:["clinic","doctors","dentist","pharmacy"]},
- {id:"hotel",name:"هتل",icon:"🏨",tags:["hotel","hostel","guest_house"]},
- {id:"leisure",name:"تفریح",icon:"🎡",tags:["cinema","museum","arts_centre","attraction"]}
+const CATS = [
+  {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'}, {id:'beauty', name:'زیبایی', icon:'💇'},
+  {id:'shopping', name:'خرید', icon:'🛒'}, {id:'health', name:'سلامت', icon:'💊'},
+  {id:'repair', name:'تعمیرات', icon:'🔧'}, {id:'auto', name:'خودرو', icon:'🚗'},
+  {id:'fitness', name:'ورزش', icon:'💪'}, {id:'education', name:'آموزش', icon:'📚'},
+  {id:'fashion', name:'پوشاک', icon:'👕'}, {id:'pets', name:'حیوانات', icon:'🐾'},
+  {id:'travel', name:'سفر', icon:'✈️'}, {id:'agri', name:'کشاورزی', icon:'🌾'},
 ];
 
-/* Verified examples from business search results.
-   Listings are not a guarantee of current opening status.
-   Add more after checking each business. */
+let savedBiz = JSON.parse(localStorage.getItem('savedBiz')) || [];
+let compareList = [];
+let walletScore = parseInt(localStorage.getItem('walletScore')) || 0;
 
-const VERIFIED_STARTERS = [
- {
-  id:"iran-mall",name:"ایران مال",city:"tehran",
-  category:"shop",address:"بزرگراه شهید خرازی، تهران، ایران",
-  lat:35.746,lon:51.074,
-  rating:4.3,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"kourosh-mall",name:"مرکز خرید کوروش",city:"tehran",
-  category:"shop",address:"بزرگراه ستاری، تهران، ایران",
-  lat:35.735,lon:51.325,
-  rating:4.3,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"palladium",name:"مرکز خرید پالادیوم",city:"tehran",
-  category:"shop",address:"خیابان مقدس اردبیلی، تهران، ایران",
-  lat:35.797,lon:51.409,
-  rating:4.1,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"persian-gulf-shiraz",name:"مجتمع خلیج فارس",city:"shiraz",
-  category:"shop",address:"بزرگراه شیراز-سپیدان، شیراز، ایران",
-  lat:29.798,lon:52.445,
-  rating:4.2,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"setareh-fars",name:"مجتمع ستاره فارس",city:"shiraz",
-  category:"shop",address:"خیابان عفیف‌آباد، شیراز، ایران",
-  lat:29.631,lon:52.499,
-  rating:3.8,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"isfahan-city-center",name:"اصفهان سیتی سنتر",city:"isfahan",
-  category:"shop",address:"بزرگراه شهید دستجردی، اصفهان، ایران",
-  lat:32.584,lon:51.666,
-  rating:4.4,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"rag-rug",name:"کافه رستوران راگ راگ",city:"isfahan",
-  category:"cafe",address:"چهارراه فلسطین، اصفهان، ایران",
-  lat:32.655,lon:51.660,
-  rating:4.9,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"ahvaz-persian-gulf",name:"سیتی سنتر خلیج فارس",city:"ahvaz",
-  category:"shop",address:"کیان‌آباد، اهواز، ایران",
-  lat:31.331,lon:48.681,
-  rating:4.4,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"laleh-park",name:"مرکز خرید لاله پارک",city:"tabriz",
-  category:"shop",address:"بزرگراه پاسداران، تبریز، ایران",
-  lat:38.087,lon:46.364,
-  rating:4.2,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"tabriz-atlas",name:"مرکز خرید اطلس",city:"tabriz",
-  category:"shop",address:"ولیعصر، تبریز، ایران",
-  lat:38.055,lon:46.354,
-  rating:4.3,image:"",
-  instagram:"",
-  status:"needs-check"
- },
- {
-  id:"tabriz-setareh",name:"مجتمع ستاره باران",city:"tabriz",
-  category:"shop",address:"بلوار ۲۲ بهمن، تبریز، ایران",
-  lat:38.068,lon:46.285,
-  rating:4.3,image:"",
-  instagram:"",
-  status:"needs-check"
- }
-];
+// ------------------ تب‌ها ------------------
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  
+  document.querySelectorAll('.nav-btn').forEach(el => {
+    el.classList.remove('text-emerald-600');
+    el.classList.add('text-neutral-500');
+  });
+  btn.classList.remove('text-neutral-500');
+  btn.classList.add('text-emerald-600');
 
-/* ---------------- APPLICATION STATE ---------------- */
-
-let selectedCity="tehran";
-let selectedCategory="all";
-let businesses=[];
-let favorites=JSON.parse(localStorage.getItem("vivora_favorites")||"[]");
-let points=Number(localStorage.getItem("vivora_points")||0);
-let map=null;
-let markers=[];
-let activeRequest=0;
-
-document.getElementById("points").textContent=points+" ✦";
-
-/* ---------------- UTILITIES ---------------- */
-
-function escapeHTML(value){
- return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
+  if (tabId === 'map') { initMap(); }
+  if (tabId === 'feed') { renderFeed(); }
+  if (tabId === 'profile') { renderProfile(); }
 }
 
-function showToast(message){
- const t=document.getElementById("toast");
- t.textContent=message;
- t.classList.add("show");
- setTimeout(()=>t.classList.remove("show"),2400);
-}
+// ------------------ رندر صفحه اصلی ------------------
+function renderHome() {
+  const city = document.getElementById('citySelect').value;
+  const q = document.getElementById('searchInput').value.trim();
+  
+  // رندر دسته‌بندی‌ها
+  document.getElementById('cats-grid').innerHTML = CATS.map(c => `
+    <button onclick="document.getElementById('searchInput').value='${c.name}'; renderHome()" class="flex flex-col items-center gap-1 bg-white rounded-2xl p-2 shadow-sm border border-neutral-100">
+      <span class="text-xl">${c.icon}</span>
+      <span class="text-[10px] text-center">${c.name}</span>
+    </button>
+  `).join('');
 
-function cityName(id){
- return CITIES.find(c=>c.id===id)?.name||"";
-}
+  let items = BIZ.filter(b => b.city === city);
+  if (q) items = items.filter(b => (b.name+b.desc+b.tags.join(' ')+b.area).includes(q));
+  
+  document.getElementById('home-title').textContent = q ? `نتایج جستجو (${items.length})` : `کسب‌وکارهای ${city === 'tehran' ? 'تهران' : 'شیراز'}`;
 
-function getCategory(tags={}){
- for(const cat of CATEGORIES){
-  if(cat.id==="all")continue;
-  if(cat.tags.some(tag=>Object.values(tags).includes(tag)))return cat.id;
- }
- return "all";
-}
-
-function getImage(item){
- if(item.image && /^https?:\/\//i.test(item.image))return item.image;
- const images={
-  cafe:"https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=650",
-  restaurant:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=650",
-  shop:"https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=650",
-  beauty:"https://images.unsplash.com/photo-1560066984-138dadb4c035?w=650",
-  hotel:"https://images.unsplash.com/photo-1566073771259-6a8506099945?w=650",
-  health:"https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=650",
-  leisure:"https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=650"
- };
- return images[item.category]||images.shop;
-}
-
-function routeURL(item){
- return "https://www.google.com/maps/dir/?api=1&destination="+
- encodeURIComponent(item.lat+","+item.lon);
-}
-
-function instagramURL(item){
- if(item.instagram && /^https:\/\/(www\.)?instagram\.com\//i.test(item.instagram)){
-  return item.instagram;
- }
- return "https://www.instagram.com/explore/search/keyword/?q="+
- encodeURIComponent(item.name);
-}
-
-/* ---------------- CITY & CATEGORY UI ---------------- */
-
-function renderCities(){
- document.getElementById("cities").innerHTML=CITIES.map(c=>`
- <button class="city ${c.id===selectedCity?"active":""}"
- onclick="selectCity('${c.id}')">${c.name}</button>
- `).join("");
-}
-
-function renderCategories(){
- document.getElementById("categories").innerHTML=CATEGORIES.map(c=>`
- <div class="category ${c.id===selectedCategory?"active":""}"
- onclick="selectCategory('${c.id}')">
- <span class="emoji">${c.icon}</span>
- <strong>${c.name}</strong>
- </div>
- `).join("");
-}
-
-function selectCity(id){
- selectedCity=id;
- selectedCategory="all";
- renderCities();
- renderCategories();
- loadBusinesses();
-}
-
-function selectCategory(id){
- selectedCategory=id;
- renderCategories();
- renderBusinesses();
-}
-
-/* ---------------- MAP ---------------- */
-
-function initMap(){
- map=L.map("map").setView([35.6892,51.3890],12);
- L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  maxZoom:19,
-  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
- }).addTo(map);
-}
-
-function updateMap(items){
- if(!map)return;
- markers.forEach(m=>map.removeLayer(m));
- markers=[];
-
- items.forEach(item=>{
-  if(!Number.isFinite(item.lat)||!Number.isFinite(item.lon))return;
-  const marker=L.marker([item.lat,item.lon]).addTo(map);
-  marker.bindPopup(`<b>${escapeHTML(item.name)}</b><br>${escapeHTML(item.address||"")}`);
-  marker.on("click",()=>{});
-  markers.push(marker);
- });
-
- const city=CITIES.find(c=>c.id===selectedCity);
- map.setView([city.lat,city.lon],12);
- if(markers.length){
-  const group=L.featureGroup(markers);
-  map.fitBounds(group.getBounds().pad(.12),{maxZoom:14});
- }
- setTimeout(()=>map.invalidateSize(),100);
-}
-
-/* ---------------- OPENSTREETMAP DATA ---------------- */
-
-function overpassQuery(city){
- const lat=city.lat,lon=city.lon,r=CONFIG.searchRadius;
- return `
- [out:json][timeout:35];
- (
-  nwr(around:${r},${lat},${lon})["name"]["shop"];
-  nwr(around:${r},${lat},${lon})["name"]["amenity"];
-  nwr(around:${r},${lat},${lon})["name"]["tourism"];
-  nwr(around:${r},${lat},${lon})["name"]["leisure"];
- );
- out center tags;
- `;
-}
-
-function convertOSM(element){
- const tags=element.tags||{};
- const lat=element.lat??element.center?.lat;
- const lon=element.lon??element.center?.lon;
- if(!tags.name||!Number.isFinite(lat)||!Number.isFinite(lon))return null;
-
- let address=[
-  tags["addr:street"],
-  tags["addr:housenumber"],
-  tags["addr:suburb"]
- ].filter(Boolean).join("، ");
-
- const type=tags.amenity||tags.shop||tags.tourism||tags.leisure||"shop";
- let category=getCategory(tags);
- if(category==="all"){
-  if(type==="restaurant"||type==="fast_food")category="restaurant";
-  else if(type==="cafe")category="cafe";
-  else if(type==="hotel"||type==="guest_house")category="hotel";
-  else category="shop";
- }
-
- return {
-  id:"osm-"+element.type+"-"+element.id,
-  name:tags.name,
-  city:selectedCity,
-  category,
-  address:address||cityName(selectedCity)+"، ایران",
-  lat,lon,
-  rating:null,
-  image:tags.image||"",
-  instagram:tags["contact:instagram"]||tags.instagram||"",
-  website:tags.website||tags["contact:website"]||"",
-  phone:tags.phone||tags["contact:phone"]||"",
-  status:"unverified",
-  source:"OpenStreetMap"
- };
-}
-
-async function fetchOSM(city,requestId){
- const query=overpassQuery(city);
- let lastError;
-
- for(const endpoint of CONFIG.overpass){
-  try{
-   const response=await fetch(endpoint,{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
-    body:"data="+encodeURIComponent(query)
-   });
-   if(!response.ok)throw new Error("خطای دریافت اطلاعات نقشه");
-   const data=await response.json();
-   if(requestId!==activeRequest)return [];
-   return (data.elements||[])
-    .map(convertOSM).filter(Boolean)
-    .filter((v,i,a)=>a.findIndex(x=>x.name===v.name&&x.lat===v.lat&&x.lon===v.lon)===i)
-    .slice(0,CONFIG.maxResults);
-  }catch(error){
-   lastError=error;
-  }
- }
- throw lastError||new Error("سرویس نقشه در دسترس نیست");
-}
-
-/* ---------------- LOAD BUSINESSES ---------------- */
-
-async function loadBusinesses(){
- const requestId=++activeRequest;
- const city=CITIES.find(c=>c.id===selectedCity);
-
- document.getElementById("businessGrid").innerHTML=
- '<div class="loader">در حال جستجوی مکان‌ها... ✨</div>';
- document.getElementById("resultCaption").textContent="در حال دریافت داده‌ها...";
-
- const starters=VERIFIED_STARTERS.filter(x=>x.city===selectedCity);
-
- try{
-  const osm=await fetchOSM(city,requestId);
-  if(requestId!==activeRequest)return;
-
-  const combined=[...starters,...osm];
-  businesses=combined.filter((v,i,a)=>
-   a.findIndex(x=>x.name.toLowerCase()===v.name.toLowerCase()&&
-   Math.abs(x.lat-v.lat)<.0002&&Math.abs(x.lon-v.lon)<.0002)===i
-  );
-
-  document.getElementById("resultCaption").textContent=
-   businesses.length+" مکان پیدا شد · حداکثر ۵۰ نتیجه از نقشه";
-
-  renderBusinesses();
- }catch(error){
-  if(requestId!==activeRequest)return;
-  businesses=starters;
-  document.getElementById("resultCaption").textContent=
-   "اتصال به سرویس نقشه برقرار نشد؛ اطلاعات اولیه نمایش داده می‌شوند.";
-  renderBusinesses();
-  showToast("دریافت اطلاعات نقشه ناموفق بود");
- }
-}
-
-/* ---------------- BUSINESS CARDS ---------------- */
-
-function renderBusinesses(){
- const search=(document.getElementById("searchInput").value||"").trim().toLowerCase();
- let list=businesses.filter(b=>{
-  const matchesCategory=selectedCategory==="all"||
-   b.category===selectedCategory;
-  const matchesSearch=(b.name+" "+b.address).toLowerCase().includes(search);
-  return matchesCategory&&matchesSearch;
- });
-
- if(document.getElementById("sortSelect").value==="name"){
-  list.sort((a,b)=>a.name.localeCompare(b.name,"fa"));
- }
-
- const grid=document.getElementById("businessGrid");
-
- if(!list.length){
-  grid.innerHTML='<div class="empty">موردی پیدا نشد. دسته‌بندی دیگری را امتحان کن 🌱</div>';
-  updateMap([]);
-  return;
- }
-
- grid.innerHTML=list.map(b=>{
-  const saved=favorites.includes(b.id);
-  const isKnown=b.status==="needs-check";
-  return `
-   <article class="business-card">
-    <img class="business-image" loading="lazy"
-     src="${escapeHTML(getImage(b))}"
-     alt="${escapeHTML(b.name)}"
-     onerror="this.src='https://placehold.co/600x400/eeeaff/7255ef?text=VIVORA'">
-    <div class="card-content">
-     <div class="card-title-row">
-      <div class="card-title">${escapeHTML(b.name)}</div>
-      <button class="heart ${saved?"saved":""}"
-       onclick="toggleFavorite('${b.id}')">${saved?"♥":"♡"}</button>
-     </div>
-     <div class="meta">📍 ${escapeHTML(cityName(selectedCity))} · ${escapeHTML(b.address)}</div>
-     ${isKnown?
-      '<span class="status unknown">نیازمند بررسی اطلاعات روز</span>':
-      '<span class="status unknown">اطلاعات نقشه · تأییدنشده</span>'}
-     <div class="card-actions">
-      <a class="route" href="${routeURL(b)}" target="_blank" rel="noopener">مسیر‌یابی ↗</a>
-      <a class="social" href="${instagramURL(b)}" target="_blank" rel="noopener">اینستاگرام ↗</a>
-      <button class="details" onclick="showDetails('${b.id}')">جزئیات</button>
-     </div>
+  document.getElementById('biz-list').innerHTML = items.map(b => `
+    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-neutral-100 relative ${b.plan==='premium'?'ring-1 ring-amber-300':''}">
+      <div class="h-36 relative">
+        <img src="${b.img}" class="w-full h-full object-cover" onclick="openDetail(${b.id})">
+        <div class="absolute top-2 left-2 flex flex-col gap-1">
+          <button onclick="toggleSave(${b.id})" class="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-sm ${savedBiz.includes(b.id)?'text-red-500':'text-neutral-400'}">♥</button>
+          <button onclick="toggleCompare(${b.id})" class="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-sm ${compareList.includes(b.id)?'text-emerald-600':'text-neutral-400'}">⚖️</button>
+        </div>
+        ${b.plan==='premium'?'<span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full">ویژه</span>':''}
+      </div>
+      <div class="p-3" onclick="openDetail(${b.id})">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="font-bold text-sm">${b.name} ${b.trust > 95 ? '<span class="text-emerald-500 text-[10px]" title="اعتبار بالا">✔️</span>' : ''}</h3>
+          <span class="text-amber-500 text-xs font-bold">⭐ ${b.rating}</span>
+        </div>
+        <p class="text-[11px] text-neutral-500 line2 mb-2">${b.desc}</p>
+        <div class="flex items-center justify-between text-[10px] text-neutral-400">
+          <span>📍 ${b.area}</span>
+          <span class="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">${b.price}</span>
+        </div>
+      </div>
     </div>
-   </article>
+  `).join('');
+
+  updateCompareBtn();
+}
+
+// ------------------ ذخیره و مقایسه ------------------
+function toggleSave(id) {
+  if (savedBiz.includes(id)) {
+    savedBiz = savedBiz.filter(x => x !== id);
+    walletScore = Math.max(0, walletScore - 10); // کم کردن امتیاز شبیه‌سازی شده
+  } else {
+    savedBiz.push(id);
+    walletScore += 10; // امتیاز برای ذخیره کردن
+  }
+  localStorage.setItem('savedBiz', JSON.stringify(savedBiz));
+  localStorage.setItem('walletScore', walletScore);
+  renderHome();
+  showToast(savedBiz.includes(id) ? 'به علاقه‌مندی‌ها اضافه شد (+۱۰ امتیاز)' : 'از علاقه‌مندی‌ها حذف شد');
+}
+
+function toggleCompare(id) {
+  if (compareList.includes(id)) {
+    compareList = compareList.filter(x => x !== id);
+  } else {
+    if (compareList.length >= 3) return showToast('حداکثر ۳ مورد را می‌توانید مقایسه کنید');
+    compareList.push(id);
+  }
+  renderHome();
+}
+
+function updateCompareBtn() {
+  const btn = document.getElementById('compare-btn');
+  if (compareList.length >= 2) {
+    btn.classList.remove('hidden');
+    btn.textContent = `مقایسه (${compareList.length})`;
+  } else {
+    btn.classList.add('hidden');
+  }
+}
+
+// ------------------ پروفایل زنده (مودال) ------------------
+function openDetail(id) {
+  const b = BIZ.find(x => x.id === id);
+  const mapQuery = encodeURIComponent(`${b.name} ${b.area} ${b.city==='tehran'?'تهران':'شیراز'}`);
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+  
+  document.getElementById('detailBody').innerHTML = `
+    <div class="relative h-56">
+      <img src="${b.img}" class="w-full h-full object-cover">
+      <button onclick="closeDetail()" class="absolute top-3 left-3 w-9 h-9 bg-white/90 rounded-full grid place-items-center text-lg">✕</button>
+      <div class="absolute bottom-3 right-3 bg-white/90 px-3 py-1 rounded-full text-xs font-bold text-emerald-700 shadow">اعتبار: ${b.trust}% ✔️</div>
+    </div>
+    <div class="p-5">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="font-bold text-xl">${b.name}</h2>
+        <span class="text-amber-600 text-sm font-bold">⭐ ${b.rating}</span>
+      </div>
+      <p class="text-xs text-neutral-500 mb-4">${b.area} · ${b.price} · ${b.tags.join(' , ')}</p>
+      
+      <div class="bg-neutral-50 rounded-xl p-3 mb-4 text-xs text-neutral-600 leading-relaxed border border-neutral-100">
+        ${b.desc}
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <a href="${mapUrl}" target="_blank" class="bg-emerald-600 text-white text-center py-2 rounded-xl text-xs font-bold">📍 مسیریابی</a>
+        <button onclick="showToast('درگاه پرداخت در نسخه بعدی متصل می‌شود')" class="bg-emerald-100 text-emerald-700 text-center py-2 rounded-xl text-xs font-bold">🛍️ رزرو / خرید</button>
+      </div>
+      
+      <div class="border-t border-neutral-200 pt-4">
+        <h4 class="font-bold text-sm mb-2">ساعات کاری و ظرفیت</h4>
+        <p class="text-xs text-neutral-500 mb-4">امروز باز است · ظرفیت باقی‌مانده: ۳</p>
+        
+        <h4 class="font-bold text-sm mb-2">دستیار شخصی شما</h4>
+        <p class="text-xs text-emerald-700 bg-emerald-50 p-2 rounded-lg">این کسب‌وکار برای نیاز شما (با توجه به تگ‌های ${b.tags.join('، ')}) گزینه بسیار مناسبی است.</p>
+      </div>
+    </div>
   `;
- }).join("");
-
- updateMap(list);
+  document.getElementById('detailModal').classList.remove('hidden');
+  document.getElementById('detailModal').classList.add('flex');
+}
+function closeDetail() {
+  document.getElementById('detailModal').classList.add('hidden');
+  document.getElementById('detailModal').classList.remove('flex');
 }
 
-/* ---------------- DETAILS ---------------- */
-
-function showDetails(id){
- const b=businesses.find(x=>x.id===id)||
- VERIFIED_STARTERS.find(x=>x.id===id);
- if(!b)return;
-
- document.getElementById("modalContent").innerHTML=`
-  <button class="close" onclick="closeModal()">✕</button>
-  <img src="${escapeHTML(getImage(b))}" style="width:100%;height:190px;object-fit:cover;border-radius:16px;margin-top:15px">
-  <h2>${escapeHTML(b.name)}</h2>
-  <p style="color:#888">📍 ${escapeHTML(b.address)}</p>
-  <p>شهر: ${escapeHTML(cityName(b.city))}</p>
-  <p>منبع اطلاعات: ${escapeHTML(b.source||"فهرست اولیه پروژه")}</p>
-  <p>وضعیت: اطلاعات نیازمند بررسی و تأیید مستقیم</p>
-  ${b.phone?`<p>تلفن: ${escapeHTML(b.phone)}</p>`:""}
-  ${b.website?`<p><a style="color:#7255ef" target="_blank" rel="noopener" href="${escapeHTML(b.website)}">وب‌سایت رسمی ↗</a></p>`:""}
-  <div style="display:flex;gap:10px;flex-wrap:wrap">
-   <a class="route" style="padding:12px;border-radius:12px" href="${routeURL(b)}" target="_blank" rel="noopener">مسیریابی</a>
-   <a class="social" style="padding:12px;border-radius:12px" href="${instagramURL(b)}" target="_blank" rel="noopener">مشاهده اینستاگرام</a>
-  </div>
- `;
- document.getElementById("modal").classList.add("open");
+// ------------------ مقایسه هوشمند ------------------
+function openCompareModal() {
+  const items = BIZ.filter(b => compareList.includes(b.id));
+  let html = `<table class="w-full text-xs text-right border-collapse">
+    <tr class="bg-neutral-100">
+      <th class="p-2 border">ویژگی</th>
+      ${items.map(b => `<th class="p-2 border">${b.name}</th>`).join('')}
+    </tr>
+    <tr><td class="p-2 border font-bold">قیمت</td>${items.map(b => `<td class="p-2 border">${b.price}</td>`).join('')}</tr>
+    <tr><td class="p-2 border font-bold">امتیاز کاربران</td>${items.map(b => `<td class="p-2 border">⭐ ${b.rating}</td>`).join('')}</tr>
+    <tr><td class="p-2 border font-bold">اعتبار (TrustScore)</td>${items.map(b => `<td class="p-2 border ${b.trust>95?'text-emerald-600 font-bold':''}">${b.trust}%</td>`).join('')}</tr>
+    <tr><td class="p-2 border font-bold">تگ‌ها</td>${items.map(b => `<td class="p-2 border">${b.tags.join(' , ')}</td>`).join('')}</tr>
+  </table>
+  <div class="mt-4 bg-emerald-50 p-3 rounded-lg text-xs text-emerald-800 leading-relaxed">
+    <strong>پیشنهاد دستیار هوشمند:</strong> با توجه به داده‌های بالا، اگر به دنبال بالاترین کیفیت و اعتماد هستید، <strong>${items.sort((a,b)=>b.trust-a.trust)[0].name}</strong> انتخاب بهتری است. اما اگر بودجه محدودی دارید، گزینه‌های دیگر را بررسی کنید.
+  </div>`;
+  document.getElementById('compareBody').innerHTML = html;
+  document.getElementById('compareModal').classList.remove('hidden');
+  document.getElementById('compareModal').classList.add('flex');
+}
+function closeCompareModal() {
+  document.getElementById('compareModal').classList.add('hidden');
+  document.getElementById('compareModal').classList.remove('flex');
 }
 
-function closeModal(){
- document.getElementById("modal").classList.remove("open");
+// ------------------ نقشه ------------------
+let mapInstance = null;
+function initMap() {
+  if (mapInstance) return;
+  mapInstance = L.map('map').setView([35.780, 51.400], 11); // مرکز تهران
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(mapInstance);
+
+  BIZ.forEach(b => {
+    const marker = L.marker([b.lat, b.lng]).addTo(mapInstance);
+    marker.bindPopup(`<div class="text-center font-sans" dir="rtl"><b>${b.name}</b><br><span class="text-xs">${b.area}</span><br><button onclick="openDetail(${b.id})" class="mt-1 bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">مشاهده</button></div>`);
+  });
 }
 
-/* ---------------- FAVORITES & POINTS ---------------- */
+// ------------------ دستیار هوشمند ------------------
+function askAI() {
+  const input = document.getElementById('aiInput').value.trim();
+  if (!input) return;
+  const chatBox = document.getElementById('chat-box');
+  
+  // پیام کاربر
+  chatBox.innerHTML += `<div class="bg-emerald-600 text-white p-3 rounded-2xl rounded-tl-none text-sm self-end max-w-[85%]">${input}</div>`;
+  document.getElementById('aiInput').value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
 
-function toggleFavorite(id){
- if(favorites.includes(id)){
-  favorites=favorites.filter(x=>x!==id);
-  showToast("از علاقه‌مندی‌ها حذف شد");
- }else{
-  favorites.push(id);
-  points+=5;
-  localStorage.setItem("vivora_points",points);
-  document.getElementById("points").textContent=points+" ✦";
-  showToast("ذخیره شد! ۵ امتیاز گرفتی ✨");
- }
- localStorage.setItem("vivora_favorites",JSON.stringify(favorites));
- renderBusinesses();
+  // شبیه‌سازی پاسخ
+  setTimeout(() => {
+    let results = BIZ.filter(b => input.includes(b.area) || b.tags.some(t => input.includes(t)) || input.includes(b.cat));
+    let reply = '';
+    if (results.length > 0) {
+      reply = `بر اساس درخواست شما، این گزینه‌ها را پیشنهاد می‌کنم:<br><ul class="list-disc pr-4 mt-2">`;
+      results.slice(0, 3).forEach(b => {
+        reply += `<li><b>${b.name}</b> در ${b.area} (اعتبار: ${b.trust}%) <button onclick="openDetail(${b.id})" class="text-emerald-600 underline">مشاهده</button></li>`;
+      });
+      reply += `</ul>`;
+    } else {
+      reply = 'متوجه شدم! اما دقیقاً چیزی با این مشخصات پیدا نکردم. می‌تونی واضح‌تر بگی؟ (مثلاً: کافه دنج در زعفرانیه)';
+    }
+    chatBox.innerHTML += `<div class="bg-emerald-50 text-emerald-800 p-3 rounded-2xl rounded-tr-none text-sm self-start max-w-[85%]">${reply}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 800);
 }
 
-function showFavorites(){
- const all=[...VERIFIED_STARTERS,...businesses];
- const unique=all.filter((b,i,a)=>a.findIndex(x=>x.id===b.id)===i);
- const list=unique.filter(b=>favorites.includes(b.id));
-
- document.getElementById("modalContent").innerHTML=`
-  <button class="close" onclick="closeModal()">✕</button>
-  <h2>علاقه‌مندی‌های من ♥</h2>
-  ${list.length?list.map(b=>`
-   <div style="padding:12px;border-bottom:1px solid #eee">
-    <b>${escapeHTML(b.name)}</b>
-    <button onclick="showDetails('${b.id}')" style="float:left;border:0;background:#eeeaff;padding:7px;border-radius:8px">جزئیات</button>
-   </div>
-  `).join(""):'<p style="color:#888">هنوز مکانی ذخیره نکرده‌ای.</p>'}
- `;
- document.getElementById("modal").classList.add("open");
+// ------------------ فید ------------------
+function renderFeed() {
+  const feed = [...BIZ].sort(() => 0.5 - Math.random()).slice(0, 5); // ۵ آیتم تصادفی
+  document.getElementById('feed-list').innerHTML = feed.map(b => `
+    <div class="feed-item bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden flex flex-col relative">
+      <img src="${b.img}" class="w-full h-3/4 object-cover">
+      <div class="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 class="font-bold text-lg flex items-center gap-2">${b.name} ${b.trust > 95 ? '<span class="text-emerald-500 text-xs">✔️</span>' : ''}</h3>
+          <p class="text-xs text-neutral-500 mt-1">${b.desc}</p>
+        </div>
+        <div class="flex items-center gap-4 mt-3">
+          <button onclick="toggleSave(${b.id})" class="text-2xl ${savedBiz.includes(b.id)?'text-red-500':'text-neutral-400'}">♥</button>
+          <button onclick="showToast('لینک کپی شد (شبیه‌سازی)')" class="text-2xl text-neutral-400">📤</button>
+          <button onclick="openDetail(${b.id})" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs mr-auto">مشاهده</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
-/* ---------------- SEARCH ---------------- */
-
-function searchFromHero(){
- document.getElementById("searchInput").value=
- document.getElementById("heroSearch").value;
- document.getElementById("searchInput").scrollIntoView({behavior:"smooth"});
- renderBusinesses();
+// ------------------ پروفایل ------------------
+function renderProfile() {
+  document.getElementById('wallet-score').textContent = walletScore;
+  document.getElementById('saved-count').textContent = savedBiz.length;
+  
+  const savedItems = BIZ.filter(b => savedBiz.includes(b.id));
+  if (savedItems.length > 0) {
+    document.getElementById('saved-list').innerHTML = savedItems.map(b => `
+      <div class="flex items-center gap-3 border-b border-neutral-100 pb-2 mb-2 last:border-0 last:pb-0 last:mb-0" onclick="openDetail(${b.id})">
+        <img src="${b.img}" class="w-12 h-12 rounded-lg object-cover">
+        <div class="flex-1 text-right">
+          <h4 class="font-bold text-sm">${b.name}</h4>
+          <p class="text-[10px] text-neutral-500">${b.area}</p>
+        </div>
+        <button onclick="event.stopPropagation(); toggleSave(${b.id})" class="text-red-500">✕</button>
+      </div>
+    `).join('');
+  }
 }
 
-function smartSearch(){
- const query=document.getElementById("aiInput").value.trim();
- if(!query)return showToast("عبارت مورد نظرت رو بنویس");
-
- const found=CITIES.find(c=>query.includes(c.name));
- if(found&&found.id!==selectedCity){
-  selectCity(found.id);
- }
- document.getElementById("searchInput").value=query
-  .replace(/در|نزدیک|شهر|یک|بهترین|دنبال|می‌خوام|میخواهم/g," ")
-  .trim();
- selectedCategory="all";
- renderCategories();
- renderBusinesses();
- document.getElementById("businessGrid").scrollIntoView({behavior:"smooth"});
- showToast("نتایج مرتبط جستجو شدند");
+// ------------------ ابزارها ------------------
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white px-4 py-2 rounded-xl text-xs z-[100] shadow-lg';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
 }
 
-/* ---------------- START ---------------- */
-
-renderCities();
-renderCategories();
-initMap();
-loadBusinesses();
-
-document.getElementById("heroSearch").addEventListener("keydown",e=>{
- if(e.key==="Enter")searchFromHero();
-});
-
-document.getElementById("aiInput").addEventListener("keydown",e=>{
- if(e.key==="Enter")smartSearch();
-});
-
+// شروع
+renderHome();
 </script>
 </body>
 </html>
