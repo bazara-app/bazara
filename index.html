@@ -7,310 +7,456 @@
 <title>بازارا — شهرت را زندگی کن</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- اضافه کردن نقشه Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  body {
-    font-family: Vazirmatn, sans-serif;
-    /* حذف پدینگ اضافی از بادی که باعث فاصله می‌شد */
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background-color: #fafafa; /* رنگ پس‌زمینه ملایم */
-  }
+  body { font-family: Vazirmatn, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
   .line2{-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
-  /* تنظیم دقیق حاشیه امن برای هدر (بالا) */
-  .safe-header {
-    padding-top: max(1rem, env(safe-area-inset-top));
-  }
-  /* تنظیم دقیق حاشیه امن برای منوی پایین */
-  .safe-nav {
-    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  #map { height: 50vh; width: 100%; border-radius: 1rem; z-index: 1; }
+  .safe-header { padding-top: max(0.5rem, env(safe-area-inset-top)); }
+  .safe-nav { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+  /* استایل اسکرول افقی برای فید */
+  .feed-container { height: calc(100vh - 140px); overflow-y: auto; scroll-snap-type: y mandatory; }
+  .feed-item { height: 100%; scroll-snap-align: start; position: relative; margin-bottom: 1rem; }
 </style>
 </head>
 <body class="text-neutral-800">
 
 <!-- هدر -->
-<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral-200 safe-header">
+<header class="sticky top-0 z-40 bg-white border-b border-neutral-200 safe-header shadow-sm">
   <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
     <div class="flex items-center gap-2">
       <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white grid place-items-center font-bold">ب</div>
       <span class="font-bold text-lg">بازارا</span>
     </div>
-    <button onclick="openLogin()" class="text-sm bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-semibold">ورود</button>
-  </div>
-</header>
-
-<!-- هیرو -->
-<section class="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white px-4 pt-10 pb-10">
-  <div class="max-w-5xl mx-auto text-center">
-    <h1 class="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">شهرت را زندگی کن، دوباره کشف کن</h1>
-    <p class="text-emerald-50 text-sm md:text-base font-medium mt-3">راهنمای هوشمند کسب‌وکارهای شهر، مقاصد خوب با یک کلیک</p>
-    <p class="text-emerald-100 text-xs md:text-sm mt-1.5 opacity-90">کافه، رستوران، آرایشگاه و هر چی که لازم داری</p>
-    <div class="mt-6 flex gap-2 bg-white rounded-2xl shadow-lg p-1.5">
-      <input id="q" oninput="render()" placeholder="دنبال چی می‌گردی؟" 
-        class="flex-1 px-3 py-2.5 text-neutral-900 outline-none rounded-xl text-sm">
-      <select id="city" onchange="render()" class="border-r px-2 text-sm text-neutral-600 bg-white rounded-xl outline-none">
-        <option>شیراز</option>
+    <div class="flex items-center gap-2">
+      <select id="citySelect" onchange="renderHome()" class="text-xs border rounded-lg p-1 outline-none">
+        <option value="tehran">تهران</option>
+        <option value="shiraz">شیراز</option>
       </select>
     </div>
   </div>
-</section>
+</header>
 
-<!-- دسته‌بندی‌ها -->
-<section class="max-w-5xl mx-auto px-4 pt-6">
-  <div class="flex items-center justify-between mb-3">
-    <h2 class="font-bold text-base">دسته‌بندی‌ها</h2>
-    <button onclick="resetCat()" class="text-xs text-emerald-700">همه</button>
+<!-- محتوای اصلی (تب‌ها) -->
+<main class="max-w-5xl mx-auto pb-24">
+
+  <!-- تب خانه -->
+  <div id="tab-home" class="tab-content active px-4 pt-4">
+    <h1 class="text-xl font-bold mb-2">شهرت را زندگی کن، دوباره کشف کن</h1>
+    <p class="text-xs text-neutral-500 mb-4">راهنمای هوشمند کسب‌وکارهای شهر</p>
+    
+    <div class="relative mb-6">
+      <input id="searchInput" oninput="renderHome()" placeholder="دنبال چی می‌گردی؟ (مثلاً کافه، رستوران...)" class="w-full bg-white border border-neutral-200 rounded-xl py-3 px-10 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500">
+      <span class="absolute left-3 top-3 text-neutral-400">🔍</span>
+    </div>
+
+    <div id="cats-grid" class="grid grid-cols-4 gap-2 mb-6"></div>
+
+    <div class="flex items-center justify-between mb-3">
+      <h2 id="home-title" class="font-bold text-base">همه کسب‌وکارها</h2>
+      <button onclick="openCompareModal()" id="compare-btn" class="hidden text-xs bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg font-bold">مقایسه (0)</button>
+    </div>
+    <div id="biz-list" class="grid gap-3"></div>
   </div>
-  <div id="cats" class="grid grid-cols-4 md:grid-cols-6 gap-2"></div>
-</section>
 
-<!-- لیست کسب‌وکارها -->
-<section class="max-w-5xl mx-auto px-4 pt-8 pb-4">
-  <div class="flex items-center justify-between mb-3">
-    <h2 id="title" class="font-bold text-base">همه کسب‌وکارها</h2>
-    <span id="count" class="text-xs text-neutral-500"></span>
+  <!-- تب نقشه -->
+  <div id="tab-map" class="tab-content px-4 pt-4">
+    <h2 class="font-bold text-base mb-3">نقشه هوشمند (اطراف شما)</h2>
+    <div id="map"></div>
+    <p class="text-xs text-neutral-500 mt-3 text-center">برای مشاهده جزئیات، روی نشانگرها کلیک کنید.</p>
   </div>
-  <div id="list" class="grid gap-3 md:grid-cols-3"></div>
-</section>
 
-<!-- فوتر حقوقی -->
-<footer class="max-w-5xl mx-auto px-4 pb-28 pt-8 text-center text-xs text-neutral-500 border-t border-neutral-200">
-  <p class="mb-3">اطلاعات این کسب‌وکارها از منابع عمومی جمع‌آوری شده است.</p>
-  <div class="flex items-center justify-center gap-4">
-    <a href="privacy.html" class="text-emerald-600 hover:underline font-semibold">سیاست حریم خصوصی</a>
-    <span>|</span>
-    <button onclick="openRemoveModal()" class="text-red-500 hover:underline font-semibold">درخواست حذف کسب‌وکار</button>
+  <!-- تب دستیار هوشمند -->
+  <div id="tab-ai" class="tab-content px-4 pt-4 flex flex-col h-[calc(100vh-140px)]">
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl">🤖</div>
+      <div>
+        <h2 class="font-bold text-base">دستیار هوشمند بازارا</h2>
+        <p class="text-xs text-neutral-500">نیازت رو بگو تا بهترین رو پیدا کنم</p>
+      </div>
+    </div>
+    <div id="chat-box" class="flex-1 bg-white rounded-2xl border border-neutral-200 p-4 overflow-y-auto flex flex-col gap-3">
+      <div class="bg-emerald-50 text-emerald-800 p-3 rounded-2xl rounded-tr-none text-sm self-start max-w-[85%]">
+        سلام! من دستیار هوشمند بازارا هستم. دنبال چه نوع کسب‌وکاری هستی؟ (مثلاً: یه کافه دنج برای درس خوندن، یا بهترین تعمیرکار خودرو)
+      </div>
+    </div>
+    <div class="mt-3 flex gap-2">
+      <input id="aiInput" placeholder="نیاز خود را بنویسید..." class="flex-1 border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+      <button onclick="askAI()" class="bg-emerald-600 text-white px-5 rounded-xl font-bold">ارسال</button>
+    </div>
   </div>
-</footer>
 
-<!-- نوار پایین -->
-<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40 safe-nav">
-  <div class="max-w-5xl mx-auto grid grid-cols-4 text-[11px] font-medium text-neutral-500">
-    <button class="py-3 flex flex-col items-center gap-1 text-emerald-600 active:bg-neutral-50"><span class="text-xl">🏠</span>خانه</button>
-    <button onclick="document.getElementById('q').focus()" class="py-3 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🔍</span>جستجو</button>
-    <button onclick="openClaim()" class="py-3 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🏪</span>کسب‌وکار من</button>
-    <button onclick="openLogin()" class="py-3 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">👤</span>حساب</button>
+  <!-- تب فید (اینستاگرام) -->
+  <div id="tab-feed" class="tab-content pt-2">
+    <div class="feed-container px-4">
+      <!-- آیتم‌های فید با جاوااسکریپت پر می‌شوند -->
+      <div id="feed-list"></div>
+    </div>
+  </div>
+
+  <!-- تب پروفایل -->
+  <div id="tab-profile" class="tab-content px-4 pt-4">
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-neutral-100 text-center mb-4">
+      <div class="w-20 h-20 bg-emerald-600 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">👤</div>
+      <h2 class="font-bold text-lg">کاربر بازارا</h2>
+      <p class="text-xs text-neutral-500">۰۹۱۲ *** ****</p>
+      <div class="mt-4 bg-emerald-50 rounded-xl p-3 flex justify-between items-center">
+        <div class="text-right">
+          <p class="text-xs text-neutral-500">کیف پول امتیاز</p>
+          <p class="font-bold text-emerald-700 text-lg"><span id="wallet-score">۰</span> امتیاز</p>
+        </div>
+        <div class="text-3xl">💎</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden mb-4">
+      <div class="p-4 border-b border-neutral-100 font-bold text-sm flex justify-between items-center">
+        <span>ذخیره‌شده‌ها (علاقه‌مندی‌ها)</span>
+        <span class="text-xs bg-neutral-100 px-2 py-0.5 rounded-full text-neutral-500" id="saved-count">۰</span>
+      </div>
+      <div id="saved-list" class="p-4 text-center text-neutral-400 text-xs">
+        هنوز چیزی ذخیره نکرده‌اید.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- منوی پایین (5 تب) -->
+<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40 safe-nav shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+  <div class="max-w-5xl mx-auto grid grid-cols-5 text-[10px] font-medium text-neutral-500">
+    <button onclick="switchTab('home', this)" class="nav-btn py-2 flex flex-col items-center gap-1 text-emerald-600 active:bg-neutral-50"><span class="text-xl">🏠</span>خانه</button>
+    <button onclick="switchTab('map', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🗺️</span>نقشه</button>
+    <button onclick="switchTab('ai', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🤖</span>دستیار</button>
+    <button onclick="switchTab('feed', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">🎬</span>کشف</button>
+    <button onclick="switchTab('profile', this)" class="nav-btn py-2 flex flex-col items-center gap-1 active:bg-neutral-50"><span class="text-xl">👤</span>پروفایل</button>
   </div>
 </nav>
 
-<!-- مودال‌ها (جزئیات، ورود، ثبت، حذف) بدون تغییر موندن -->
-<div id="modal" class="fixed inset-0 bg-black/50 z-50 hidden items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this)closeModal()">
-  <div class="bg-white w-full max-w-lg rounded-t-3xl md:rounded-3xl max-h-[90vh] overflow-y-auto" id="modalBody"></div>
+<!-- مودال جزئیات / پروفایل زنده -->
+<div id="detailModal" class="fixed inset-0 bg-black/60 z-50 hidden items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this)closeDetail()">
+  <div class="bg-white w-full max-w-lg rounded-t-3xl md:rounded-3xl max-h-[90vh] overflow-y-auto" id="detailBody"></div>
 </div>
 
-<div id="login" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
-  <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center">
-    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">👋</div>
-    <h3 class="font-bold text-lg mb-2">به بازارا خوش آمدید</h3>
-    <p class="text-sm text-neutral-500 mb-6 leading-relaxed">قابلیت ثبت‌نام و ورود با شماره موبایل در نسخه‌های بعدی فعال خواهد شد. در حال حاضر می‌توانید از تمام امکانات جستجو و مسیریابی به صورت رایگان استفاده کنید.</p>
-    <button onclick="document.getElementById('login').classList.add('hidden');document.getElementById('login').classList.remove('flex')" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">متوجه شدم</button>
-  </div>
-</div>
-
-<div id="claim" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
-  <div class="bg-white w-full max-w-sm rounded-3xl p-6">
-    <h3 class="font-bold text-lg mb-1">ثبت کسب‌وکار جدید</h3>
-    <p class="text-xs text-neutral-500 mb-4">اگر صاحب کسب‌وکاری هستید که در بازارا نیست، اطلاعات آن را وارد کنید تا رایگان ثبت شود.</p>
-    <input id="bizName" placeholder="نام کسب‌وکار" class="w-full border rounded-xl px-3 py-3 mb-2 text-sm">
-    <input id="bizPhone" placeholder="شماره تماس" class="w-full border rounded-xl px-3 py-3 mb-3 text-sm">
-    <button onclick="submitClaim()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold">ارسال درخواست</button>
-  </div>
-</div>
-
-<div id="removeModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden');this.classList.remove('flex')">
-  <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center">
-    <h3 class="font-bold text-lg mb-2 text-red-600">درخواست حذف کسب‌وکار</h3>
-    <p class="text-sm text-neutral-600 mb-5 leading-relaxed">اگر صاحب این کسب‌وکار هستید و مایل به حذف اطلاعات خود از بازارا هستید، از طریق راه‌های زیر با ما در تماس باشید. اطلاعات شما حداکثر تا ۴۸ ساعت حذف خواهد شد.</p>
-    
-    <!-- ⚠️ این خطوط رو بعدا با اطلاعات واقعی خودت عوض می‌کنیم -->
-    <a href="mailto:support@bazara.ir?subject=درخواست حذف کسب‌وکار&body=سلام، لطفا اطلاعات کسب‌وکار من را از اپلیکیشن بازارا حذف کنید.%0Aنام کسب‌وکار: " class="block w-full bg-neutral-800 text-white py-3 rounded-xl font-semibold mb-2 text-sm">ارسال ایمیل</a>
-    <a href="https://wa.me/989170000000?text=سلام، درخواست حذف کسب‌وکار من از اپ بازارا را دارم." class="block w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold text-sm">تماس در واتساپ</a>
-    
-    <button onclick="document.getElementById('removeModal').classList.add('hidden');document.getElementById('removeModal').classList.remove('flex')" class="mt-4 text-xs text-neutral-400">بستن</button>
+<!-- مودال مقایسه -->
+<div id="compareModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)closeCompareModal()">
+  <div class="bg-white w-full max-w-3xl rounded-3xl p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="font-bold text-lg">مقایسه هوشمند</h2>
+      <button onclick="closeCompareModal()" class="text-2xl">&times;</button>
+    </div>
+    <div id="compareBody" class="overflow-x-auto"></div>
   </div>
 </div>
 
 <script>
-const CATS = [
-  {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'}, {id:'beauty', name:'زیبایی و آرایش', icon:'💇'},
-  {id:'shopping', name:'خرید و مارکت', icon:'🛒'}, {id:'health', name:'سلامت و درمان', icon:'💊'},
-  {id:'repair', name:'تعمیرات خانه', icon:'🔧'}, {id:'auto', name:'خودرو', icon:'🚗'},
-  {id:'fitness', name:'ورزش', icon:'💪'}, {id:'education', name:'آموزش', icon:'📚'},
-  {id:'fashion', name:'پوشاک و مد', icon:'👕'}, {id:'pets', name:'حیوانات خانگی', icon:'🐾'},
-  {id:'travel', name:'سفر و اقامت', icon:'✈️'}, {id:'agri', name:'کشاورزی و عمده', icon:'🌾'},
-];
-
+// دیتابیس تستی ۲۰ کسب‌وکار (۱۰ تهران، ۱۰ شیراز) با مختصات و تگ
 const BIZ = [
-  {id:1, name:'کافه ونیز', cat:'food', sub:'کافه', area:'معالی‌آباد', rating:4.7, reviews:82, desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=250&fit=crop', plan:'premium'},
-  {id:2, name:'رستوران هفت‌خوان', cat:'food', sub:'رستوران', area:'قصردشت', rating:4.5, reviews:210, desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop', plan:'pro'},
-  {id:3, name:'فست‌فود برگرلند', cat:'food', sub:'فست‌فود', area:'زندیه', rating:4.3, reviews:156, desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop', plan:'free'},
-  {id:4, name:'قنادی گلستان', cat:'food', sub:'قنادی', area:'حافظیه', rating:4.8, reviews:340, desc:'شیرینی سنتی شیرازی', img:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&h=250&fit=crop', plan:'pro'},
-  {id:9, name:'کافه کتاب', cat:'food', sub:'کافه', area:'ارم', rating:4.6, reviews:120, desc:'کافه و کتاب‌فروشی', img:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&h=250&fit=crop', plan:'pro'},
-  {id:10, name:'کبابی شاطرعباس', cat:'food', sub:'کباب', area:'چهارراه مشیر', rating:4.7, reviews:290, desc:'کباب کوبیده اصل', img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=250&fit=crop', plan:'free'},
-  {id:11, name:'کافه راز', cat:'food', sub:'کافه', area:'بلوار چمران', rating:4.4, reviews:88, desc:'فضای دنج و آرام برای مطالعه', img:'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=400&h=250&fit=crop', plan:'free'},
-  {id:12, name:'رستوران شاطر', cat:'food', sub:'رستوران', area:'معالی‌آباد', rating:4.2, reviews:130, desc:'انواع غذاهای ایرانی', img:'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=250&fit=crop', plan:'free'},
-  {id:13, name:'پیتزا سیب', cat:'food', sub:'فست‌فود', area:'قدوسی غربی', rating:4.6, reviews:400, desc:'پیتزاهای خوشمزه با پنیر پیتزا', img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=250&fit=crop', plan:'premium'},
-  {id:14, name:'آبمیوه بستنی هدیش', cat:'food', sub:'آبمیوه', area:'زندیه', rating:4.8, reviews:210, desc:'آبمیوه طبیعی و بستنی سنتی', img:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=250&fit=crop', plan:'free'},
-  {id:5, name:'آرایشگاه رویال', cat:'beauty', sub:'آرایشگاه مردانه', area:'بلوار رحمت', rating:4.6, reviews:95, desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=250&fit=crop', plan:'free'},
-  {id:6, name:'سالن زیبایی نیلا', cat:'beauty', sub:'سالن زیبایی', area:'ستارخان', rating:4.9, reviews:178, desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop', plan:'premium'},
-  {id:15, name:'آرایشگاه ژاویه', cat:'beauty', sub:'آرایشگاه مردانه', area:'قصردشت', rating:4.5, reviews:64, desc:'اصلاح و ماساژ صورت', img:'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=250&fit=crop', plan:'free'},
-  {id:16, name:'کلینیک زیبایی درسا', cat:'beauty', sub:'کلینیک پوست', area:'معالی‌آباد', rating:4.8, reviews:200, desc:'خدمات تخصصی پوست و مو', img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=250&fit=crop', plan:'pro'},
-  {id:7, name:'سوپرمارکت رفاه', cat:'shopping', sub:'مارکت', area:'فرهنگ‌شهر', rating:4.2, reviews:64, desc:'خرید روزانه با قیمت مناسب', img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=250&fit=crop', plan:'free'},
-  {id:8, name:'میوه‌فروشی باغ', cat:'shopping', sub:'میوه تازه', area:'قدوسی', rating:4.4, reviews:41, desc:'میوه تازه و ارسال رایگان', img:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=250&fit=crop', plan:'free'},
-  {id:17, name:'هایپراستار شیراز', cat:'shopping', sub:'هایپر', area:'بلوار چمران', rating:4.7, reviews:800, desc:'خرید عمده و خرده', img:'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&h=250&fit=crop', plan:'pro'},
-  {id:18, name:'پروتئین‌شاپ قهرمان', cat:'shopping', sub:'مکمل ورزشی', area:'زندیه', rating:4.9, reviews:110, desc:'انواع مکمل‌های بدنسازی اصل', img:'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&h=250&fit=crop', plan:'premium'},
-  {id:19, name:'دکتر محمدی (دندانپزشک)', cat:'health', sub:'دندانپزشکی', area:'معالی‌آباد', rating:4.8, reviews:150, desc:'دندانپزشکی زیبایی و ایمپلنت', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=250&fit=crop', plan:'premium'},
-  {id:20, name:'داروخانه شبانه‌روزی', cat:'health', sub:'داروخانه', area:'قصردشت', rating:4.5, reviews:80, desc:'ارائه کلیه داروها در تمام ساعات', img:'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?w=400&h=250&fit=crop', plan:'free'},
-  {id:21, name:'کلینیک دامپزشکی پت', cat:'health', sub:'دامپزشکی', area:'بلوار رحمت', rating:4.7, reviews:60, desc:'درمان و واکسیناسیون حیوانات', img:'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&h=250&fit=crop', plan:'pro'},
-  {id:22, name:'مرکز ماساژ آرامش', cat:'health', sub:'ماساژ', area:'فرهنگ‌شهر', rating:4.6, reviews:95, desc:'ماساژ درمانی و ریلکسی', img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=250&fit=crop', plan:'free'},
-  {id:23, name:'لوله‌کشی برقکاری حرفه‌ای', cat:'repair', sub:'تاسیسات', area:'کل شیراز', rating:4.9, reviews:120, desc:'خدمات ۲۴ ساعته لوله‌کشی و برق', img:'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=250&fit=crop', plan:'pro'},
-  {id:24, name:'تعمیرات موبایل هوشمند', cat:'repair', sub:'موبایل', area:'چهارراه مشیر', rating:4.4, reviews:200, desc:'تعویض ال‌سی‌دی و باتری', img:'https://images.unsplash.com/photo-1598327105666-5b89351cb31b?w=400&h=250&fit=crop', plan:'free'},
-  {id:25, name:'نجاری و کابینت سازی', cat:'repair', sub:'نجاری', area:'قصردشت', rating:4.7, reviews:45, desc:'ساخت کابینت و ام‌دی‌اف', img:'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400&h=250&fit=crop', plan:'free'},
-  {id:26, name:'تعمیرگاه لوازم خانگی', cat:'repair', sub:'لوازم خانگی', area:'زندیه', rating:4.3, reviews:55, desc:'تعمیر لباسشویی و یخچال', img:'https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=400&h=250&fit=crop', plan:'free'},
-  {id:27, name:'اتوسرویس پارس', cat:'auto', sub:'مکانیکی', area:'بلوار امیرکبیر', rating:4.6, reviews:80, desc:'تعمیرات تخصصی خودروهای ایرانی', img:'https://images.unsplash.com/photo-1613214149922-f1809c99c9a1?w=400&h=250&fit=crop', plan:'pro'},
-  {id:28, name:'کارواش نانو', cat:'auto', sub:'کارواش', area:'معالی‌آباد', rating:4.8, reviews:150, desc:'شستشوی نانو و دیتیلینگ', img:'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?w=400&h=250&fit=crop', plan:'premium'},
-  {id:29, name:'آپاراتی و لاستیک فروشی', cat:'auto', sub:'لاستیک', area:'زندیه', rating:4.2, reviews:60, desc:'فروش و نصب انواع لاستیک', img:'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=400&h=250&fit=crop', plan:'free'},
-  {id:30, name:'دینام و استارت', cat:'auto', sub:'برق خودرو', area:'قصردشت', rating:4.5, reviews:40, desc:'تعمیر دینام و استارت', img:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=250&fit=crop', plan:'free'},
-  {id:31, name:'باشگاه بدنسازی آهن', cat:'fitness', sub:'بدنسازی', area:'معالی‌آباد', rating:4.7, reviews:130, desc:'مجهز به بهترین دستگاه‌ها', img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=250&fit=crop', plan:'pro'},
-  {id:32, name:'استخر پوریا', cat:'fitness', sub:'استخر', area:'قصردشت', rating:4.4, reviews:80, desc:'استخر سرپوشیده با مربی', img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=250&fit=crop', plan:'free'},
-  {id:33, name:'باشگاه رزمی', cat:'fitness', sub:'رزمی', area:'فرهنگ‌شهر', rating:4.9, reviews:50, desc:'آموزش کاراته و MMA', img:'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400&h=250&fit=crop', plan:'pro'},
-  {id:34, name:'پارک ورزشی شهر', cat:'fitness', sub:'پارک', area:'بلوار چمران', rating:4.6, reviews:200, desc:'فضای باز برای ورزش صبحگاهی', img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=250&fit=crop', plan:'free'},
-  {id:35, name:'آموزشگاه زبان آکسفورد', cat:'education', sub:'زبان انگلیسی', area:'معالی‌آباد', rating:4.8, reviews:300, desc:'تدریس تخصصی IELTS', img:'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=400&h=250&fit=crop', plan:'premium'},
-  {id:36, name:'آموزشگاه کنکور', cat:'education', sub:'کنکور', area:'زندیه', rating:4.5, reviews:150, desc:'کلاس‌های ریاضی و فیزیک', img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=250&fit=crop', plan:'pro'},
-  {id:37, name:'کلاس موسیقی', cat:'education', sub:'موسیقی', area:'قصردشت', rating:4.7, reviews:80, desc:'آموزش گیتار و پیانو', img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=250&fit=crop', plan:'free'},
-  {id:38, name:'کلاس نقاشی', cat:'education', sub:'هنر', area:'حافظیه', rating:4.9, reviews:60, desc:'آموزش سیاه‌قلم و رنگ روغن', img:'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=250&fit=crop', plan:'free'},
-  {id:39, name:'بوتیک پوشاک', cat:'fashion', sub:'لباس زنانه', area:'بلوار رحمت', rating:4.6, reviews:120, desc:'لباس‌های مجلسی و اسپرت', img:'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=250&fit=crop', plan:'pro'},
-  {id:40, name:'کفش فروشی', cat:'fashion', sub:'کفش', area:'زندیه', rating:4.3, reviews:90, desc:'انواع کفش چرم و اسپرت', img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=250&fit=crop', plan:'free'},
-  {id:41, name:'مانتو فروشی', cat:'fashion', sub:'مانتو', area:'معالی‌آباد', rating:4.8, reviews:200, desc:'مانتوهای جدید و شیک', img:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=250&fit=crop', plan:'free'},
-  {id:42, name:'بوتیک مردانه', cat:'fashion', sub:'لباس مردانه', area:'قصردشت', rating:4.5, reviews:50, desc:'کت و شلوار و لباس اسپرت', img:'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=400&h=250&fit=crop', plan:'free'},
-  {id:43, name:'پت شاپ پری', cat:'pets', sub:'پت شاپ', area:'معالی‌آباد', rating:4.7, reviews:110, desc:'غذا و لوازم حیوانات', img:'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=250&fit=crop', plan:'free'},
-  {id:44, name:'پانسیون حیوانات', cat:'pets', sub:'پانسیون', area:'بلوار چمران', rating:4.8, reviews:60, desc:'نگهداری سگ و گربه', img:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=250&fit=crop', plan:'pro'},
-  {id:45, name:'فروشگاه ماهی', cat:'pets', sub:'ماهی', area:'زندیه', rating:4.4, reviews:40, desc:'ماهی زینتی و آکواریوم', img:'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&h=250&fit=crop', plan:'free'},
-  {id:46, name:'پرنده فروشی', cat:'pets', sub:'پرنده', area:'قصردشت', rating:4.5, reviews:70, desc:'قناری و طوطی', img:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=250&fit=crop', plan:'free'},
-  {id:47, name:'آژانس مسافرتی', cat:'travel', sub:'آژانس', area:'معالی‌آباد', rating:4.6, reviews:150, desc:'تورهای داخلی و خارجی', img:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=250&fit=crop', plan:'pro'},
-  {id:48, name:'هتل بزرگ شیراز', cat:'travel', sub:'هتل', area:'چمران', rating:4.9, reviews:900, desc:'اقامت لوکس و رستوران', img:'https://images.unsplash.com/photo-1542314831-c6a4d1424b09?w=400&h=250&fit=crop', plan:'premium'},
-  {id:49, name:'اقامتگاه بومگردی', cat:'travel', sub:'بومگردی', area:'حافظیه', rating:4.8, reviews:200, desc:'تجربه زندگی سنتی', img:'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400&h=250&fit=crop', plan:'free'},
-  {id:50, name:'اجاره ماشین', cat:'travel', sub:'اجاره خودرو', area:'فرودگاه', rating:4.4, reviews:80, desc:'اجاره خودروهای صفر', img:'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=250&fit=crop', plan:'free'},
-  {id:51, name:'میوه و تره بار عمده', cat:'agri', sub:'عمده فروشی', area:'میدان مرکزی', rating:4.5, reviews:60, desc:'تامین میوه رستوران‌ها', img:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=250&fit=crop', plan:'pro'},
-  {id:52, name:'گلخانه گیاهان آپارتمانی', cat:'agri', sub:'گل و گیاه', area:'بلوار رحمت', rating:4.7, reviews:110, desc:'فروش انواع گیاهان', img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=250&fit=crop', plan:'free'},
-  {id:53, name:'تامین مرغ و گوشت', cat:'agri', sub:'پروتئین', area:'زندیه', rating:4.3, reviews:80, desc:'تامین عمده رستوران‌ها', img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=250&fit=crop', plan:'free'},
-  {id:54, name:'لبنیات سنتی', cat:'agri', sub:'لبنیات', area:'قصردشت', rating:4.9, reviews:150, desc:'ماست و پنیر محلی', img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&h=250&fit=crop', plan:'free'}
+  // تهران
+  {id:1, name:'کافه راز', city:'tehran', cat:'food', area:'زعفرانیه', lat:35.799, lng:51.415, rating:4.8, trust:98, price:'لوکس', tags:['دنج','رمانتیک','مدرن'], desc:'کافه دنج با فضای کار و قهوه تخصصی', img:'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=600&h=400&fit=crop', plan:'premium'},
+  {id:2, name:'رستوران شمشیری', city:'tehran', cat:'food', area:'تجریش', lat:35.805, lng:51.433, rating:4.5, trust:92, price:'متوسط', tags:['سنتی','خانوادگی','کباب'], desc:'غذای سنتی ایرانی در فضای دنج', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop', plan:'pro'},
+  {id:3, name:'پیتزا آتش', city:'tehran', cat:'food', area:'ولنجک', lat:35.808, lng:51.403, rating:4.2, trust:85, price:'اقتصادی', tags:['فست فود','بیرون بر'], desc:'پیتزا با خمیر تازه و پنیر پیتزا', img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=400&fit=crop', plan:'free'},
+  {id:4, name:'دندانپزشکی دکتر احمدی', city:'tehran', cat:'health', area:'سعادت آباد', lat:35.780, lng:51.380, rating:4.9, trust:99, price:'لوکس', tags:['ایمپلنت','VIP'], desc:'دندانپزشکی زیبایی و ایمپلنت با تیم مجرب', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&h=400&fit=crop', plan:'premium'},
+  {id:5, name:'سالن زیبایی پریا', city:'tehran', cat:'beauty', area:'نیاوران', lat:35.815, lng:51.470, rating:4.7, trust:95, price:'متوسط', tags:['میکاپ','پوست'], desc:'خدمات تخصصی زیبایی بانوان', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=400&fit=crop', plan:'pro'},
+  {id:6, name:'اتوسرویس برتر', city:'tehran', cat:'auto', area:'پونک', lat:35.750, lng:51.330, rating:4.4, trust:88, price:'متوسط', tags:['مکانیکی','تعمیر'], desc:'تعمیرات تخصصی خودروهای خارجی', img:'https://images.unsplash.com/photo-1613214149922-f1809c99c9a1?w=600&h=400&fit=crop', plan:'free'},
+  {id:7, name:'آموزشگاه زبان نوین', city:'tehran', cat:'education', area:'ونک', lat:35.760, lng:51.410, rating:4.8, trust:96, price:'اقتصادی', tags:['زبان','آیلتس'], desc:'آموزش زبان انگلیسی با متد روز', img:'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&h=400&fit=crop', plan:'pro'},
+  {id:8, name:'باشگاه بدنسازی آهن', city:'tehran', cat:'fitness', area:'صادقیه', lat:35.720, lng:51.340, rating:4.6, trust:90, price:'اقتصادی', tags:['بدنسازی','فیتنس'], desc:'مجهز به بهترین دستگاه‌های بدنسازی', img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop', plan:'free'},
+  {id:9, name:'بوتیک پوشاک زری', city:'tehran', cat:'fashion', area:'میرداماد', lat:35.770, lng:51.430, rating:4.3, trust:82, price:'لوکس', tags:['لباس زنانه','مجلسی'], desc:'لباس‌های مجلسی و شیک', img:'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=600&h=400&fit=crop', plan:'free'},
+  {id:10, name:'پت شاپ کیوت', city:'tehran', cat:'pets', area:'جردن', lat:35.765, lng:51.420, rating:4.7, trust:93, price:'متوسط', tags:['حیوانات','غذا'], desc:'غذا و لوازم حیوانات خانگی', img:'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&h=400&fit=crop', plan:'free'},
+  
+  // شیراز
+  {id:11, name:'کافه ونیز', city:'shiraz', cat:'food', area:'معالی‌آباد', lat:29.620, lng:52.480, rating:4.7, trust:94, price:'متوسط', tags:['دنج','قهوه','کیک'], desc:'کافه دنج با قهوه تخصصی و کیک خانگی', img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=400&fit=crop', plan:'premium'},
+  {id:12, name:'رستوران هفت‌خوان', city:'shiraz', cat:'food', area:'قصردشت', lat:29.630, lng:52.510, rating:4.5, trust:91, price:'متوسط', tags:['سنتی','خانوادگی'], desc:'غذای سنتی ایرانی با کیفیت بالا', img:'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&h=400&fit=crop', plan:'pro'},
+  {id:13, name:'فست‌فود برگرلند', city:'shiraz', cat:'food', area:'زندیه', lat:29.610, lng:52.530, rating:4.3, trust:86, price:'اقتصادی', tags:['برگر','فست فود'], desc:'برگر دست‌ساز و سیب‌زمینی تازه', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop', plan:'free'},
+  {id:14, name:'سالن زیبایی نیلا', city:'shiraz', cat:'beauty', area:'ستارخان', lat:29.600, lng:52.540, rating:4.9, trust:97, price:'لوکس', tags:['میکاپ','VIP'], desc:'میکاپ و پوست خانم‌ها', img:'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=400&fit=crop', plan:'premium'},
+  {id:15, name:'آرایشگاه رویال', city:'shiraz', cat:'beauty', area:'بلوار رحمت', lat:29.580, lng:52.520, rating:4.6, trust:89, price:'متوسط', tags:['آقایان','اصلاح'], desc:'اصلاح و آرایش تخصصی آقایان', img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=400&fit=crop', plan:'free'},
+  {id:16, name:'لوله‌کشی حرفه‌ای', city:'shiraz', cat:'repair', area:'کل شیراز', lat:29.615, lng:52.500, rating:4.8, trust:95, price:'متوسط', tags:['۲۴ ساعته','تاسیسات'], desc:'خدمات ۲۴ ساعته لوله‌کشی و برق', img:'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=400&fit=crop', plan:'pro'},
+  {id:17, name:'دکتر محمدی (دندانپزشک)', city:'shiraz', cat:'health', area:'معالی‌آباد', lat:29.625, lng:52.485, rating:4.8, trust:96, price:'لوکس', tags:['دندانپزشکی','ایمپلنت'], desc:'دندانپزشکی زیبایی و ایمپلنت', img:'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&h=400&fit=crop', plan:'premium'},
+  {id:18, name:'باشگاه رزمی', city:'shiraz', cat:'fitness', area:'فرهنگ‌شهر', lat:29.640, lng:52.490, rating:4.9, trust:98, price:'اقتصادی', tags:['کاراته','MMA'], desc:'آموزش کاراته و MMA', img:'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=600&h=400&fit=crop', plan:'pro'},
+  {id:19, name:'هتل بزرگ شیراز', city:'shiraz', cat:'travel', area:'چمران', lat:29.650, lng:52.470, rating:4.9, trust:99, price:'لوکس', tags:['هتل','اقامت'], desc:'اقامت لوکس و رستوران', img:'https://images.unsplash.com/photo-1542314831-c6a4d1424b09?w=600&h=400&fit=crop', plan:'premium'},
+  {id:20, name:'لبنیات سنتی', city:'shiraz', cat:'agri', area:'قصردشت', lat:29.635, lng:52.515, rating:4.9, trust:92, price:'اقتصادی', tags:['ماست','محلی'], desc:'ماست و پنیر محلی', img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&h=400&fit=crop', plan:'free'}
 ];
 
-let selectedCat = 'all';
+const CATS = [
+  {id:'food', name:'غذا و نوشیدنی', icon:'🍽️'}, {id:'beauty', name:'زیبایی', icon:'💇'},
+  {id:'shopping', name:'خرید', icon:'🛒'}, {id:'health', name:'سلامت', icon:'💊'},
+  {id:'repair', name:'تعمیرات', icon:'🔧'}, {id:'auto', name:'خودرو', icon:'🚗'},
+  {id:'fitness', name:'ورزش', icon:'💪'}, {id:'education', name:'آموزش', icon:'📚'},
+  {id:'fashion', name:'پوشاک', icon:'👕'}, {id:'pets', name:'حیوانات', icon:'🐾'},
+  {id:'travel', name:'سفر', icon:'✈️'}, {id:'agri', name:'کشاورزی', icon:'🌾'},
+];
 
-function renderCats(){
-  document.getElementById('cats').innerHTML = CATS.map(c => `
-    <button onclick="pickCat('${c.id}')" class="flex flex-col items-center gap-1 bg-white rounded-2xl p-2 shadow-sm ${selectedCat===c.id?'ring-2 ring-emerald-500':''}">
+let savedBiz = JSON.parse(localStorage.getItem('savedBiz')) || [];
+let compareList = [];
+let walletScore = parseInt(localStorage.getItem('walletScore')) || 0;
+
+// ------------------ تب‌ها ------------------
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  
+  document.querySelectorAll('.nav-btn').forEach(el => {
+    el.classList.remove('text-emerald-600');
+    el.classList.add('text-neutral-500');
+  });
+  btn.classList.remove('text-neutral-500');
+  btn.classList.add('text-emerald-600');
+
+  if (tabId === 'map') { initMap(); }
+  if (tabId === 'feed') { renderFeed(); }
+  if (tabId === 'profile') { renderProfile(); }
+}
+
+// ------------------ رندر صفحه اصلی ------------------
+function renderHome() {
+  const city = document.getElementById('citySelect').value;
+  const q = document.getElementById('searchInput').value.trim();
+  
+  // رندر دسته‌بندی‌ها
+  document.getElementById('cats-grid').innerHTML = CATS.map(c => `
+    <button onclick="document.getElementById('searchInput').value='${c.name}'; renderHome()" class="flex flex-col items-center gap-1 bg-white rounded-2xl p-2 shadow-sm border border-neutral-100">
       <span class="text-xl">${c.icon}</span>
-      <span class="text-[10px] text-center leading-tight">${c.name}</span>
+      <span class="text-[10px] text-center">${c.name}</span>
     </button>
   `).join('');
-}
 
-function pickCat(id){ selectedCat = id; renderCats(); render(); }
-function resetCat(){ selectedCat = 'all'; renderCats(); render(); }
+  let items = BIZ.filter(b => b.city === city);
+  if (q) items = items.filter(b => (b.name+b.desc+b.tags.join(' ')+b.area).includes(q));
+  
+  document.getElementById('home-title').textContent = q ? `نتایج جستجو (${items.length})` : `کسب‌وکارهای ${city === 'tehran' ? 'تهران' : 'شیراز'}`;
 
-function render(){
-  const q = document.getElementById('q').value.trim();
-  let items = BIZ.slice();
-  if(selectedCat !== 'all') items = items.filter(b => b.cat === selectedCat);
-  if(q) items = items.filter(b => (b.name+b.desc+b.sub+b.area).includes(q));
-  items.sort((a,b)=> (b.plan==='premium'?1:0)-(a.plan==='premium'?1:0) || b.rating-a.rating);
-
-  const cat = CATS.find(c=>c.id===selectedCat);
-  document.getElementById('title').textContent = cat ? cat.name : 'همه کسب‌وکارها';
-  document.getElementById('count').textContent = items.length + ' نتیجه';
-
-  if(!items.length){
-    document.getElementById('list').innerHTML = `<div class="col-span-3 text-center py-12 text-neutral-400 text-sm">چیزی پیدا نشد</div>`;
-    return;
-  }
-
-  document.getElementById('list').innerHTML = items.map(b => `
-    <div onclick="openBiz(${b.id})" class="bg-white rounded-2xl overflow-hidden shadow-sm active:scale-[0.98] transition cursor-pointer ${b.plan==='premium'?'ring-1 ring-amber-300':''}">
-      <div class="h-36 bg-neutral-100 relative">
-        <img src="${b.img}" alt="${b.name}" class="w-full h-full object-cover" loading="lazy">
-        ${b.plan==='premium'?'<span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full">ویژه</span>':''}
-        ${b.plan==='pro'?'<span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full">حرفه‌ای</span>':''}
-      </div>
-      <div class="p-3">
-        <div class="flex items-center justify-between">
-          <h3 class="font-semibold text-sm">${b.name}</h3>
-          <span class="text-amber-600 text-xs">⭐ ${b.rating}</span>
+  document.getElementById('biz-list').innerHTML = items.map(b => `
+    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-neutral-100 relative ${b.plan==='premium'?'ring-1 ring-amber-300':''}">
+      <div class="h-36 relative">
+        <img src="${b.img}" class="w-full h-full object-cover" onclick="openDetail(${b.id})">
+        <div class="absolute top-2 left-2 flex flex-col gap-1">
+          <button onclick="toggleSave(${b.id})" class="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-sm ${savedBiz.includes(b.id)?'text-red-500':'text-neutral-400'}">♥</button>
+          <button onclick="toggleCompare(${b.id})" class="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-sm ${compareList.includes(b.id)?'text-emerald-600':'text-neutral-400'}">⚖️</button>
         </div>
-        <p class="text-[11px] text-neutral-500 mt-1 line2">${b.desc}</p>
-        <div class="flex items-center gap-1 text-[11px] text-neutral-400 mt-2">
-          <span>📍 ${b.area}</span><span>·</span><span>${b.sub}</span>
+        ${b.plan==='premium'?'<span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full">ویژه</span>':''}
+      </div>
+      <div class="p-3" onclick="openDetail(${b.id})">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="font-bold text-sm">${b.name} ${b.trust > 95 ? '<span class="text-emerald-500 text-[10px]" title="اعتبار بالا">✔️</span>' : ''}</h3>
+          <span class="text-amber-500 text-xs font-bold">⭐ ${b.rating}</span>
+        </div>
+        <p class="text-[11px] text-neutral-500 line2 mb-2">${b.desc}</p>
+        <div class="flex items-center justify-between text-[10px] text-neutral-400">
+          <span>📍 ${b.area}</span>
+          <span class="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">${b.price}</span>
         </div>
       </div>
     </div>
   `).join('');
+
+  updateCompareBtn();
 }
 
-function openBiz(id){
-  const b = BIZ.find(x=>x.id===id);
-  const cat = CATS.find(c=>c.id===b.cat);
-  
-  const mapQuery = encodeURIComponent(`${b.name} ${b.area} شیراز`);
+// ------------------ ذخیره و مقایسه ------------------
+function toggleSave(id) {
+  if (savedBiz.includes(id)) {
+    savedBiz = savedBiz.filter(x => x !== id);
+    walletScore = Math.max(0, walletScore - 10); // کم کردن امتیاز شبیه‌سازی شده
+  } else {
+    savedBiz.push(id);
+    walletScore += 10; // امتیاز برای ذخیره کردن
+  }
+  localStorage.setItem('savedBiz', JSON.stringify(savedBiz));
+  localStorage.setItem('walletScore', walletScore);
+  renderHome();
+  showToast(savedBiz.includes(id) ? 'به علاقه‌مندی‌ها اضافه شد (+۱۰ امتیاز)' : 'از علاقه‌مندی‌ها حذف شد');
+}
+
+function toggleCompare(id) {
+  if (compareList.includes(id)) {
+    compareList = compareList.filter(x => x !== id);
+  } else {
+    if (compareList.length >= 3) return showToast('حداکثر ۳ مورد را می‌توانید مقایسه کنید');
+    compareList.push(id);
+  }
+  renderHome();
+}
+
+function updateCompareBtn() {
+  const btn = document.getElementById('compare-btn');
+  if (compareList.length >= 2) {
+    btn.classList.remove('hidden');
+    btn.textContent = `مقایسه (${compareList.length})`;
+  } else {
+    btn.classList.add('hidden');
+  }
+}
+
+// ------------------ پروفایل زنده (مودال) ------------------
+function openDetail(id) {
+  const b = BIZ.find(x => x.id === id);
+  const mapQuery = encodeURIComponent(`${b.name} ${b.area} ${b.city==='tehran'?'تهران':'شیراز'}`);
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   
-  const instaQuery = encodeURIComponent(`اینستاگرام ${b.name} ${b.area} شیراز`);
-  const instaUrl = `https://www.google.com/search?q=${instaQuery}`;
-
-  document.getElementById('modalBody').innerHTML = `
+  document.getElementById('detailBody').innerHTML = `
     <div class="relative h-56">
       <img src="${b.img}" class="w-full h-full object-cover">
-      <button onclick="closeModal()" class="absolute top-3 left-3 w-9 h-9 bg-white/90 rounded-full grid place-items-center text-lg">✕</button>
+      <button onclick="closeDetail()" class="absolute top-3 left-3 w-9 h-9 bg-white/90 rounded-full grid place-items-center text-lg">✕</button>
+      <div class="absolute bottom-3 right-3 bg-white/90 px-3 py-1 rounded-full text-xs font-bold text-emerald-700 shadow">اعتبار: ${b.trust}% ✔️</div>
     </div>
     <div class="p-5">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between mb-2">
         <h2 class="font-bold text-xl">${b.name}</h2>
-        <span class="text-amber-600 text-sm">⭐ ${b.rating} (${b.reviews})</span>
+        <span class="text-amber-600 text-sm font-bold">⭐ ${b.rating}</span>
       </div>
-      <p class="text-xs text-neutral-500 mt-1">${cat.icon} ${cat.name} · ${b.sub}</p>
-      <p class="mt-3 text-sm text-neutral-700 leading-relaxed">${b.desc}</p>
-      <div class="mt-4 space-y-2 text-sm">
-        <div class="flex items-center gap-2 text-neutral-600">📍 ${b.area}، شیراز</div>
-        <div class="flex items-center gap-2 text-neutral-600">🕐 هر روز ۹ تا ۲۳</div>
+      <p class="text-xs text-neutral-500 mb-4">${b.area} · ${b.price} · ${b.tags.join(' , ')}</p>
+      
+      <div class="bg-neutral-50 rounded-xl p-3 mb-4 text-xs text-neutral-600 leading-relaxed border border-neutral-100">
+        ${b.desc}
       </div>
-      <div class="mt-5 grid grid-cols-2 gap-2">
-        <a href="${mapUrl}" target="_blank" class="bg-emerald-600 text-white text-center py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-1">📍 مسیریابی</a>
-        <a href="${instaUrl}" target="_blank" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-center py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-1">📸 اینستاگرام</a>
+
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <a href="${mapUrl}" target="_blank" class="bg-emerald-600 text-white text-center py-2 rounded-xl text-xs font-bold">📍 مسیریابی</a>
+        <button onclick="showToast('درگاه پرداخت در نسخه بعدی متصل می‌شود')" class="bg-emerald-100 text-emerald-700 text-center py-2 rounded-xl text-xs font-bold">🛍️ رزرو / خرید</button>
+      </div>
+      
+      <div class="border-t border-neutral-200 pt-4">
+        <h4 class="font-bold text-sm mb-2">ساعات کاری و ظرفیت</h4>
+        <p class="text-xs text-neutral-500 mb-4">امروز باز است · ظرفیت باقی‌مانده: ۳</p>
+        
+        <h4 class="font-bold text-sm mb-2">دستیار شخصی شما</h4>
+        <p class="text-xs text-emerald-700 bg-emerald-50 p-2 rounded-lg">این کسب‌وکار برای نیاز شما (با توجه به تگ‌های ${b.tags.join('، ')}) گزینه بسیار مناسبی است.</p>
       </div>
     </div>
   `;
-  const m = document.getElementById('modal');
-  m.classList.remove('hidden'); m.classList.add('flex');
+  document.getElementById('detailModal').classList.remove('hidden');
+  document.getElementById('detailModal').classList.add('flex');
+}
+function closeDetail() {
+  document.getElementById('detailModal').classList.add('hidden');
+  document.getElementById('detailModal').classList.remove('flex');
 }
 
-function closeModal(){ const m = document.getElementById('modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-function openLogin(){ const l = document.getElementById('login'); l.classList.remove('hidden'); l.classList.add('flex'); }
-function openClaim(){ const c = document.getElementById('claim'); c.classList.remove('hidden'); c.classList.add('flex'); }
+// ------------------ مقایسه هوشمند ------------------
+function openCompareModal() {
+  const items = BIZ.filter(b => compareList.includes(b.id));
+  let html = `<table class="w-full text-xs text-right border-collapse">
+    <tr class="bg-neutral-100">
+      <th class="p-2 border">ویژگی</th>
+      ${items.map(b => `<th class="p-2 border">${b.name}</th>`).join('')}
+    </tr>
+    <tr><td class="p-2 border font-bold">قیمت</td>${items.map(b => `<td class="p-2 border">${b.price}</td>`).join('')}</tr>
+    <tr><td class="p-2 border font-bold">امتیاز کاربران</td>${items.map(b => `<td class="p-2 border">⭐ ${b.rating}</td>`).join('')}</tr>
+    <tr><td class="p-2 border font-bold">اعتبار (TrustScore)</td>${items.map(b => `<td class="p-2 border ${b.trust>95?'text-emerald-600 font-bold':''}">${b.trust}%</td>`).join('')}</tr>
+    <tr><td class="p-2 border font-bold">تگ‌ها</td>${items.map(b => `<td class="p-2 border">${b.tags.join(' , ')}</td>`).join('')}</tr>
+  </table>
+  <div class="mt-4 bg-emerald-50 p-3 rounded-lg text-xs text-emerald-800 leading-relaxed">
+    <strong>پیشنهاد دستیار هوشمند:</strong> با توجه به داده‌های بالا، اگر به دنبال بالاترین کیفیت و اعتماد هستید، <strong>${items.sort((a,b)=>b.trust-a.trust)[0].name}</strong> انتخاب بهتری است. اما اگر بودجه محدودی دارید، گزینه‌های دیگر را بررسی کنید.
+  </div>`;
+  document.getElementById('compareBody').innerHTML = html;
+  document.getElementById('compareModal').classList.remove('hidden');
+  document.getElementById('compareModal').classList.add('flex');
+}
+function closeCompareModal() {
+  document.getElementById('compareModal').classList.add('hidden');
+  document.getElementById('compareModal').classList.remove('flex');
+}
 
-function submitClaim(){ 
-  const n = document.getElementById('bizName').value.trim();
-  const p = document.getElementById('bizPhone').value.trim();
-  if(!n || !p) return alert('لطفا نام کسب‌وکار و شماره تماس را وارد کنید.');
+// ------------------ نقشه ------------------
+let mapInstance = null;
+function initMap() {
+  if (mapInstance) return;
+  mapInstance = L.map('map').setView([35.780, 51.400], 11); // مرکز تهران
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(mapInstance);
+
+  BIZ.forEach(b => {
+    const marker = L.marker([b.lat, b.lng]).addTo(mapInstance);
+    marker.bindPopup(`<div class="text-center font-sans" dir="rtl"><b>${b.name}</b><br><span class="text-xs">${b.area}</span><br><button onclick="openDetail(${b.id})" class="mt-1 bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">مشاهده</button></div>`);
+  });
+}
+
+// ------------------ دستیار هوشمند ------------------
+function askAI() {
+  const input = document.getElementById('aiInput').value.trim();
+  if (!input) return;
+  const chatBox = document.getElementById('chat-box');
   
-  const text = `سلام، من صاحب کسب‌وکار "${n}" هستم. شماره تماس من: ${p}. لطفا اطلاعات کسب‌وکار من را در اپلیکیشن بازارا ثبت کنید.`;
-  window.open(`https://wa.me/989170000000?text=${encodeURIComponent(text)}`, '_blank');
+  // پیام کاربر
+  chatBox.innerHTML += `<div class="bg-emerald-600 text-white p-3 rounded-2xl rounded-tl-none text-sm self-end max-w-[85%]">${input}</div>`;
+  document.getElementById('aiInput').value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // شبیه‌سازی پاسخ
+  setTimeout(() => {
+    let results = BIZ.filter(b => input.includes(b.area) || b.tags.some(t => input.includes(t)) || input.includes(b.cat));
+    let reply = '';
+    if (results.length > 0) {
+      reply = `بر اساس درخواست شما، این گزینه‌ها را پیشنهاد می‌کنم:<br><ul class="list-disc pr-4 mt-2">`;
+      results.slice(0, 3).forEach(b => {
+        reply += `<li><b>${b.name}</b> در ${b.area} (اعتبار: ${b.trust}%) <button onclick="openDetail(${b.id})" class="text-emerald-600 underline">مشاهده</button></li>`;
+      });
+      reply += `</ul>`;
+    } else {
+      reply = 'متوجه شدم! اما دقیقاً چیزی با این مشخصات پیدا نکردم. می‌تونی واضح‌تر بگی؟ (مثلاً: کافه دنج در زعفرانیه)';
+    }
+    chatBox.innerHTML += `<div class="bg-emerald-50 text-emerald-800 p-3 rounded-2xl rounded-tr-none text-sm self-start max-w-[85%]">${reply}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 800);
+}
+
+// ------------------ فید ------------------
+function renderFeed() {
+  const feed = [...BIZ].sort(() => 0.5 - Math.random()).slice(0, 5); // ۵ آیتم تصادفی
+  document.getElementById('feed-list').innerHTML = feed.map(b => `
+    <div class="feed-item bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden flex flex-col relative">
+      <img src="${b.img}" class="w-full h-3/4 object-cover">
+      <div class="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 class="font-bold text-lg flex items-center gap-2">${b.name} ${b.trust > 95 ? '<span class="text-emerald-500 text-xs">✔️</span>' : ''}</h3>
+          <p class="text-xs text-neutral-500 mt-1">${b.desc}</p>
+        </div>
+        <div class="flex items-center gap-4 mt-3">
+          <button onclick="toggleSave(${b.id})" class="text-2xl ${savedBiz.includes(b.id)?'text-red-500':'text-neutral-400'}">♥</button>
+          <button onclick="showToast('لینک کپی شد (شبیه‌سازی)')" class="text-2xl text-neutral-400">📤</button>
+          <button onclick="openDetail(${b.id})" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs mr-auto">مشاهده</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ------------------ پروفایل ------------------
+function renderProfile() {
+  document.getElementById('wallet-score').textContent = walletScore;
+  document.getElementById('saved-count').textContent = savedBiz.length;
   
-  document.getElementById('claim').classList.add('hidden'); 
-  document.getElementById('claim').classList.remove('flex'); 
-  document.getElementById('bizName').value = '';
-  document.getElementById('bizPhone').value = '';
+  const savedItems = BIZ.filter(b => savedBiz.includes(b.id));
+  if (savedItems.length > 0) {
+    document.getElementById('saved-list').innerHTML = savedItems.map(b => `
+      <div class="flex items-center gap-3 border-b border-neutral-100 pb-2 mb-2 last:border-0 last:pb-0 last:mb-0" onclick="openDetail(${b.id})">
+        <img src="${b.img}" class="w-12 h-12 rounded-lg object-cover">
+        <div class="flex-1 text-right">
+          <h4 class="font-bold text-sm">${b.name}</h4>
+          <p class="text-[10px] text-neutral-500">${b.area}</p>
+        </div>
+        <button onclick="event.stopPropagation(); toggleSave(${b.id})" class="text-red-500">✕</button>
+      </div>
+    `).join('');
+  }
 }
 
-function openRemoveModal(){ 
-  const r = document.getElementById('removeModal'); 
-  r.classList.remove('hidden'); 
-  r.classList.add('flex'); 
+// ------------------ ابزارها ------------------
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white px-4 py-2 rounded-xl text-xs z-[100] shadow-lg';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
 }
 
-renderCats();
-render();
+// شروع
+renderHome();
 </script>
 </body>
 </html>
